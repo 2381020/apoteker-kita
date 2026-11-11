@@ -93,7 +93,7 @@ export function Footer() {
             <h3 className="text-xl font-semibold uppercase tracking-wider text-white/90 mb-5">
               Ikuti Kami
             </h3>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
               {SOCIAL_ICONS.map((s) => (
                 <button
                   key={s.label}

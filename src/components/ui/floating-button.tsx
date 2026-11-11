@@ -18,7 +18,7 @@ export function FloatingButton({
       onClick={onClick}
       aria-label="Buka Tanya Apoteker"
       className={cn(
-        "group fixed bottom-20 right-20 z-50 flex h-[96px] w-[96px] items-center justify-center rounded-full border-[3px] border-white bg-[#174F49] shadow-xl shadow-black/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-[#FFE082] active:scale-95",
+        "group relative flex h-20 w-20 items-center justify-center rounded-full border-[3px] border-white bg-[#174F49] shadow-xl shadow-black/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-[#FFE082] active:scale-95 sm:h-24 sm:w-24",
         className
       )}
     >

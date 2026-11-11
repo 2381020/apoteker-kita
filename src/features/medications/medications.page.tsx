@@ -134,7 +134,7 @@ function MedicationDetails({
             Informasi dasar
           </h4>
 
-          <dl className="mt-3 grid grid-cols-2 gap-3">
+          <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-lg bg-muted p-3">
               <dt className="text-xs text-secondary-text">Nama generik</dt>
               <dd className="mt-1 font-medium text-main-text">

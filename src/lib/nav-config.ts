@@ -21,6 +21,7 @@ export interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
+  children?: NavItem[];
 }
 
 export interface NavGroup {

@@ -528,7 +528,7 @@ export function ManageGuidesPage() {
   // --------------------------------------------------
 
   return (
-    <div className="min-h-screen space-y-6 bg-[#f8fafc] p-4 sm:p-6 lg:p-8">
+    <div className="animate-fade-in space-y-6">
       {/* Notification */}
       {notification && (
         <div
@@ -913,7 +913,7 @@ export function ManageGuidesPage() {
             }
           }}
         >
-          <div className="flex max-h-[94vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+          <div className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:max-h-[94vh]">
             {/* Dialog header */}
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-7">
               <div>

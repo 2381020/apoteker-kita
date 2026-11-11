@@ -10,7 +10,7 @@ export function AdminLayout() {
       <Navbar withTopBar={false} />
       <div className="flex w-full flex-1">
         <Sidebar withTopBar={false} />
-        <main id="main-content" className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8">
+        <main id="main-content" className="min-w-0 flex-1 px-4 pb-24 pt-6 sm:px-6 sm:pb-12 sm:pt-8">
           <Outlet />
         </main>
       </div>

@@ -426,14 +426,14 @@ export function DosisPage() {
   };
 
   return (
-    <div className="animate-fade-in px-4 sm:px-6 max-w-full sm:max-w-2xl space-y-6">
+    <div className="animate-fade-in mx-auto w-full max-w-2xl space-y-6">
       <PageHeader
         title="Kalkulator Dosis Obat"
         description="Hitung dosis obat yang tepat berdasarkan berat badan, usia, dan metode perhitungan"
       />
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="p-6 space-y-4">
+        <Card className="p-4 space-y-4 sm:p-6">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-main-text uppercase tracking-wider">
             Data Pasien
           </h2>
@@ -536,7 +536,7 @@ export function DosisPage() {
           )}
         </Card>
 
-        <Card className="p-6 space-y-4 h-full">
+        <Card className="h-full p-4 space-y-4 sm:p-6">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-main-text uppercase tracking-wider">
             Hasil Perhitungan
           </h2>
@@ -573,7 +573,7 @@ export function DosisPage() {
               </div>
 
               {/* Hasil Utama */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="rounded-xl bg-primary-soft/60 p-5 text-center">
                   <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
                     Dosis per kali
@@ -664,9 +664,9 @@ export function DosisPage() {
               <MedicalDisclaimer />
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center text-secondary-text">
-              <Calculator className="h-12 w-12 mb-3 opacity-50" />
-              <p>Masukkan data pasian di kiri lalu klik "Hitung Dosis"</p>
+            <div className="flex h-64 flex-col items-center justify-center gap-3 px-3 text-center text-secondary-text">
+              <Calculator className="h-12 w-12 opacity-50" />
+              <p>Masukkan data pasien di kiri lalu klik "Hitung Dosis"</p>
             </div>
           )}
         </Card>

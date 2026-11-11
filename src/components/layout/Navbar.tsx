@@ -1,7 +1,9 @@
+
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
+  X,
   ChevronDown,
   LogOut,
   LayoutDashboard,
@@ -9,34 +11,52 @@ import {
   History,
   MessageCircle,
 } from "lucide-react";
+
 import { useAuth } from "@/hooks/useAuth";
-import { PUBLIC_NAV, isDashboardPath, isAdminPath, SIDEBAR_ADMIN, SIDEBAR_AKUN } from "@/lib/nav-config";
+import {
+  PUBLIC_NAV,
+  isDashboardPath,
+  isAdminPath,
+  SIDEBAR_ADMIN,
+  SIDEBAR_AKUN,
+} from "@/lib/nav-config";
+
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Button } from "@/components/ui/button";
+import type { CSSProperties } from "react";
+
+// =====================================================
+// LOGO
+// =====================================================
 
 export function Logo({ className }: { className?: string }) {
   return (
     <Link
       to="/"
       className={cn(
-        "flex items-center gap-2.5 transition-opacity hover:opacity-80",
+        "flex shrink-0 items-center gap-2",
+        "transition-opacity hover:opacity-80",
         className
       )}
     >
       <img
         src="/images/logo.png"
         alt="ApotekerKita"
-        className="h-9 w-9 rounded-xl"
+        className="h-8 w-8 rounded-xl sm:h-9 sm:w-9"
       />
 
-      <span className="text-lg font-bold tracking-tight text-main-text">
+      <span className="whitespace-nowrap text-base font-bold tracking-tight text-main-text sm:text-lg">
         Apoteker<span className="text-brand-text">Kita</span>
       </span>
     </Link>
   );
 }
+
+// =====================================================
+// NAVBAR
+// =====================================================
 
 interface NavbarProps {
   withTopBar?: boolean;
@@ -51,17 +71,30 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Tutup menu ketika berpindah halaman
   useEffect(() => {
     setUserMenuOpen(false);
+    setMobileOpen(false);
   }, [location.pathname]);
 
+  // Escape untuk menutup dropdown akun
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setUserMenuOpen(false);
+      if (event.key === "Escape") {
+        setUserMenuOpen(false);
+      }
     };
+
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+
+    return () => {
+      window.removeEventListener("keydown", onKey);
+    };
   }, []);
+
+  // =====================================================
+  // NAVIGATION CONFIGURATION
+  // =====================================================
 
   const showSidebar =
     isDashboardPath(location.pathname) ||
@@ -70,21 +103,45 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
   const showPublicNav = !showSidebar;
 
   const isActive = (href: string) => {
-    if (href === "/") return location.pathname === "/";
+    if (href === "/") {
+      return location.pathname === "/";
+    }
+
     if (href === "/admin" || href === "/dashboard") {
       return location.pathname === href;
     }
+
     return (
       location.pathname === href ||
       location.pathname.startsWith(href + "/")
     );
   };
 
+  // =====================================================
+  // USER MENU
+  // =====================================================
+
   const userMenuLinks = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/pengingat", label: "Pengingat Obat", icon: BellRing },
-    { href: "/riwayat", label: "Riwayat Konsumsi", icon: History },
-    { href: "/tanya", label: "Tanya Apoteker", icon: MessageCircle },
+    {
+      href: "/dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      href: "/pengingat",
+      label: "Pengingat Obat",
+      icon: BellRing,
+    },
+    {
+      href: "/riwayat",
+      label: "Riwayat Konsumsi",
+      icon: History,
+    },
+    {
+      href: "/tanya",
+      label: "Tanya Apoteker",
+      icon: MessageCircle,
+    },
   ];
 
   const accountLinks = SIDEBAR_AKUN;
@@ -97,38 +154,77 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
     .join("")
     .toUpperCase();
 
+  // =====================================================
+  // MOBILE NAV POSITION
+  // =====================================================
+
+  const mobileNavStyle: CSSProperties = {
+    "--mobile-nav-top": withTopBar
+      ? "calc(var(--topbar-h) + var(--navbar-h))"
+      : "var(--navbar-h)",
+  } as CSSProperties;
+
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <>
       <header
         className={cn(
-          "sticky z-40 border-b border-border bg-surface/95 backdrop-blur-md",
-          withTopBar ? "top-[var(--topbar-h)] mt-[var(--topbar-h)]" : "top-0"
+          "sticky z-40 border-b border-border",
+          "bg-surface/95 backdrop-blur-md",
+          withTopBar
+            ? "top-[var(--topbar-h)] mt-[var(--topbar-h)]"
+            : "top-0"
         )}
       >
         <div
           className={cn(
-            "flex h-[var(--navbar-h)] w-full items-center justify-between px-4 sm:px-6",
+            "relative flex h-[var(--navbar-h)] w-full",
+            "min-w-0 items-center justify-between",
+            "gap-2 px-3 sm:gap-4 sm:px-6",
             showPublicNav && "mx-auto max-w-[var(--layout-max)]"
           )}
         >
+          {/* =========================================
+              LOGO DAN HAMBURGER MENU
+          ========================================= */}
 
-          {/* Logo dan tombol mobile */}
-          <div className="flex shrink-0 items-center gap-3 lg:gap-4">
+          <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3 lg:gap-4">
             <button
-              onClick={() => setMobileOpen(true)}
-              className="rounded-lg p-2 text-secondary-text transition-colors hover:text-main-text lg:hidden"
-              aria-label="Buka menu"
+              type="button"
+              onClick={() => setMobileOpen((v) => !v)}
+              className={cn(
+                "flex h-10 w-10 shrink-0 items-center justify-center",
+                "rounded-lg text-secondary-text",
+                "transition-colors hover:bg-accent hover:text-main-text",
+                "lg:hidden"
+              )}
+              aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
+              aria-expanded={mobileOpen}
             >
-              <Menu className="h-5 w-5" />
+              {mobileOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
 
             <Logo />
           </div>
 
-          {/* Navigasi utama */}
+          {/* =========================================
+              NAVIGASI DESKTOP
+              PENTING: hidden pada mobile
+          ========================================= */}
+
           {showPublicNav && (
             <nav
-              className="mx-auto flex shrink-0 items-center gap-1 lg:flex"
+              className={cn(
+                "mx-auto hidden shrink-0 items-center gap-1",
+                "lg:flex"
+              )}
               aria-label="Navigasi utama"
             >
               {PUBLIC_NAV.map((item) => {
@@ -141,7 +237,9 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                     to={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200",
+                      "flex items-center gap-1.5 rounded-lg",
+                      "px-3 py-2 text-sm font-medium",
+                      "transition-colors duration-200",
                       active
                         ? "text-[#263238]"
                         : "text-secondary-text hover:text-[#263238]"
@@ -163,13 +261,24 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
             </nav>
           )}
 
-          {/* Menu pengguna */}
-          <div className="flex shrink-0 items-center gap-2">
+          {/* =========================================
+              MENU PENGGUNA
+          ========================================= */}
+
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {isAuthenticated ? (
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-full border border-border bg-surface min-h-[44px] pl-1.5 pr-3 text-sm font-medium text-main-text shadow-sm transition-colors hover:bg-accent"
+                  aria-expanded={userMenuOpen}
+                  className={cn(
+                    "flex min-h-[40px] items-center gap-2",
+                    "rounded-full border border-border",
+                    "bg-surface pl-1.5 pr-2 sm:pr-3",
+                    "text-sm font-medium text-main-text",
+                    "shadow-sm transition-colors hover:bg-accent"
+                  )}
                 >
                   <Avatar className="h-7 w-7">
                     {user?.profilePicture && (
@@ -195,9 +304,16 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                       onClick={() => setUserMenuOpen(false)}
                     />
 
-                    <div className="animate-fade-in absolute right-2 left-2 mt-2 max-w-[calc(100vw-1rem)] rounded-xl border border-border bg-surface p-1.5 shadow-popover">
+                    <div
+                      className={cn(
+                        "animate-fade-in absolute right-0 z-50",
+                        "mt-2 w-64 max-w-[calc(100vw-1.5rem)]",
+                        "rounded-xl border border-border",
+                        "bg-surface p-1.5 shadow-popover"
+                      )}
+                    >
+                      {/* INFORMASI PENGGUNA */}
 
-                      {/* Informasi pengguna */}
                       <div className="border-b border-border px-3 py-2.5">
                         <p className="truncate text-sm font-semibold text-main-text">
                           {user?.fullName}
@@ -208,7 +324,8 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                         </p>
                       </div>
 
-                      {/* Menu utama */}
+                      {/* MENU UTAMA */}
+
                       {(isAdmin ? adminLinks : userMenuLinks).map((l) => {
                         const Icon = l.icon;
                         const active = isActive(l.href);
@@ -219,7 +336,8 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                             to={l.href}
                             onClick={() => setUserMenuOpen(false)}
                             className={cn(
-                              "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
+                              "flex items-center gap-2.5 rounded-lg",
+                              "px-3 py-2 text-sm transition-colors",
                               active
                                 ? "bg-accent text-main-text"
                                 : "text-secondary-text hover:text-main-text"
@@ -231,11 +349,13 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                         );
                       })}
 
-                      {/* Menu akun */}
+                      {/* MENU AKUN */}
+
                       <div className="mt-1 border-t border-border pt-1">
                         <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-secondary-text">
                           Akun
                         </p>
+
                         {accountLinks.map((l) => {
                           const Icon = l.icon;
                           const active = isActive(l.href);
@@ -246,7 +366,8 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                               to={l.href}
                               onClick={() => setUserMenuOpen(false)}
                               className={cn(
-                                "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
+                                "flex items-center gap-2.5 rounded-lg",
+                                "px-3 py-2 text-sm transition-colors",
                                 active
                                   ? "bg-accent text-main-text"
                                   : "text-secondary-text hover:text-main-text"
@@ -259,15 +380,22 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                         })}
                       </div>
 
-                      {/* Logout */}
+                      {/* LOGOUT */}
+
                       <div className="mt-1 border-t border-border pt-1">
                         <button
+                          type="button"
                           onClick={() => {
                             logout();
                             setUserMenuOpen(false);
                             navigate("/");
                           }}
-                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
+                          className={cn(
+                            "flex w-full items-center gap-2.5",
+                            "rounded-lg px-3 py-2 text-sm",
+                            "text-destructive transition-colors",
+                            "hover:bg-destructive/10"
+                          )}
                         >
                           <LogOut className="h-4 w-4" />
                           Keluar
@@ -283,7 +411,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                   asChild
                   variant="outline"
                   size="sm"
-                  className="inline-flex"
+                  className="px-2.5 text-xs sm:px-3 sm:text-sm"
                 >
                   <Link to="/login">Masuk</Link>
                 </Button>
@@ -291,7 +419,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                 <Button
                   asChild
                   size="sm"
-                  className="bg-brand text-brand-foreground hover:bg-brand-hover"
+                  className="bg-brand px-2.5 text-xs text-brand-foreground hover:bg-brand-hover sm:px-3 sm:text-sm"
                 >
                   <Link to="/register">Daftar</Link>
                 </Button>
@@ -301,11 +429,17 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
         </div>
       </header>
 
-      {/* Navigasi mobile */}
-      <MobileNav
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-      />
+      {/* =========================================
+          MOBILE DROPDOWN NAVIGATION
+          Variabel posisi diwariskan ke MobileNav
+      ========================================= */}
+
+      <div style={mobileNavStyle}>
+        <MobileNav
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+        />
+      </div>
     </>
   );
 }

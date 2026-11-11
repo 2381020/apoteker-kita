@@ -162,7 +162,7 @@ export function TanyaPage() {
         icon={MessageCircle}
       />
 
-      <div className="flex h-[70dvh] min-h-[420px] max-h-[640px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-card">
+      <div className="flex h-[70dvh] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-card">
         {/* Header chat */}
         <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-4 sm:px-5">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary">

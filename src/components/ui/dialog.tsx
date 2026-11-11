@@ -81,7 +81,7 @@ export function Dialog({ open, onOpenChange, title, description, children, class
       aria-modal="true"
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descriptionId : undefined}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onOpenChange(false);
       }}
@@ -94,7 +94,7 @@ export function Dialog({ open, onOpenChange, title, description, children, class
       <div
         ref={panelRef}
         className={cn(
-          "relative flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-lg border border-bg surface bg-surface shadow-sm",
+          "relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-lg flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-soft sm:max-h-[calc(100dvh-2rem)]",
           className
         )}
       >
@@ -105,9 +105,9 @@ export function Dialog({ open, onOpenChange, title, description, children, class
         >
           <X className="h-4 w-4" />
         </button>
-        <div className="overflow-y-auto p-6">
+        <div className="overflow-y-auto p-4 sm:p-6">
           {title && (
-            <h2 id={titleId} className="pr-8 text-xl font-semibold text-main-text">
+            <h2 id={titleId} className="pr-8 text-lg font-semibold text-main-text sm:text-xl">
               {title}
             </h2>
           )}

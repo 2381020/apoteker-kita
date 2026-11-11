@@ -98,7 +98,7 @@ export function HeroSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="grid min-h-[360px] items-center gap-6 px-6 py-10 sm:px-10 lg:min-h-[420px] lg:grid-cols-2 lg:px-14">
+      <div className="grid min-h-[320px] items-center gap-6 px-4 py-8 sm:px-10 sm:py-10 lg:min-h-[420px] lg:grid-cols-2 lg:px-14">
         
         {/* Konten teks */}
         <div
@@ -129,7 +129,7 @@ export function HeroSlider() {
         {/* Gambar ilustrasi */}
         <div
           key={`image-${active}`}
-          className="flex h-full min-h-[220px] items-center justify-center animate-fade-in lg:min-h-[320px]"
+          className="flex h-full min-h-[180px] items-center justify-center animate-fade-in sm:min-h-[220px] lg:min-h-[320px]"
         >
           <img
             src={currentSlide.image}
@@ -145,7 +145,7 @@ export function HeroSlider() {
         type="button"
         onClick={prev}
         aria-label="Slide sebelumnya"
-        className="absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:left-5"
+        className="absolute left-3 top-1/2 z-20 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:left-5 sm:flex"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -155,7 +155,7 @@ export function HeroSlider() {
         type="button"
         onClick={next}
         aria-label="Slide berikutnya"
-        className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:right-5"
+        className="absolute right-3 top-1/2 z-20 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:right-5 sm:flex"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

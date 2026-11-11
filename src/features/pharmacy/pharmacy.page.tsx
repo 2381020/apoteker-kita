@@ -43,7 +43,7 @@ function PharmacyCard({ pharmacy }: { pharmacy: Pharmacy }) {
           </div>
 
           <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold text-main-text">
+            <h3 className="line-clamp-2 overflow-hidden block -webkit-box -webkit-line-clamp-2 text-base font-semibold text-main-text">
               {pharmacy.name}
             </h3>
 

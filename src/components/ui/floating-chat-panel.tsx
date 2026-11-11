@@ -257,7 +257,7 @@ export function FloatingChatPanel({
     <div
       className={cn(
         "pointer-events-none fixed z-40 flex flex-col items-end",
-        isMobile ? "bottom-4 right-4 left-4" : "bottom-10 right-6",
+        isMobile ? "bottom-4 left-4 right-4" : "bottom-10 right-6",
       )}
     >
       {!isOpen && (
@@ -276,7 +276,7 @@ export function FloatingChatPanel({
             "pointer-events-auto flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-soft",
             "animate-fade-in",
             isMobile
-              ? "h-[min(500px,calc(100dvh-150px))] w-full max-w-xs mx-auto"
+              ? "h-[min(500px,calc(100dvh-140px))] w-full max-w-sm mx-auto"
               : "h-[560px] w-[380px] max-w-[calc(100vw-32px)]",
           )}
         >

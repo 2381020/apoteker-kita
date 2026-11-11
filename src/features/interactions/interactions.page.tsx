@@ -208,7 +208,7 @@ function InteractionResults({
 
       {/* Result heading */}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e9eeee] px-6 py-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e9eeee] px-4 py-4 sm:px-6 sm:py-5">
         <div className="flex items-center gap-3">
           {hasInteractions ? (
             <ShieldAlert
@@ -248,7 +248,7 @@ function InteractionResults({
         )}
       </div>
 
-      <div className="px-6 py-5">
+      <div className="px-4 py-4 sm:px-6 sm:py-5">
 
         {/* Medication combination */}
 
@@ -409,7 +409,7 @@ export function InteraksiPage() {
 
         {/* Panel heading */}
 
-        <div className="flex items-center gap-4 border-b border-[#edf0f0] px-6 py-6">
+        <div className="flex items-center gap-3 border-b border-[#edf0f0] px-4 py-4 sm:gap-4 sm:px-6 sm:py-6">
           <SearchCheck
             size={22}
             strokeWidth={2}
@@ -429,7 +429,7 @@ export function InteraksiPage() {
 
         {/* Form */}
 
-        <div className="space-y-6 px-6 py-6">
+        <div className="space-y-6 px-4 py-5 sm:px-6 sm:py-6">
 
           <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-[1fr_48px_1fr]">
 

@@ -66,6 +66,7 @@
       "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
   }
 
@@ -204,6 +205,15 @@
 
 .logo-marquee-track {
   will-change: transform;
+}
+
+/* Cegah zoom otomatis iOS saat fokus input di layar kecil */
+@media (max-width: 639px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

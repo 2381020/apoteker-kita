@@ -139,7 +139,7 @@ export function BerandaPage() {
 
       {/* Hero */}
       <section className="overflow-hidden rounded-2xl border border-border bg-surface">
-        <div className="bg-surface px-6 py-10 sm:px-8 sm:py-12">
+        <div className="bg-surface px-4 py-8 sm:px-8 sm:py-12">
           <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-surface px-3 py-1 text-xs font-semibold text-secondary">
@@ -184,7 +184,7 @@ export function BerandaPage() {
               <PlaceholderImage
                 src="/images/obat.png"
                 alt="Ilustrasi obat sehari-hari"
-                className="w-full h-auto max-w-520px object-contain mx-auto"
+                className="mx-auto h-auto w-full max-w-[420px] object-contain sm:max-w-[520px]"
               />
             </div>
           </div>

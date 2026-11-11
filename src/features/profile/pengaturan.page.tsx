@@ -228,17 +228,17 @@ export function PengaturanPage() {
           </p>
 
           {!isAdmin && (
-            <div className="mt-5 flex items-center justify-between rounded-xl border border-border px-4 py-3.5">
-              <div className="flex items-center gap-3">
+            <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-border px-4 py-3.5">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
                   <Bell className="h-4 w-4" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-main-text">Notifikasi Pengingat</p>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-main-text">Notifikasi Pengingat</p>
                   <p className="text-xs text-secondary-text">Terima pengingat jadwal minum obat</p>
                 </div>
               </div>
-              <label className="relative inline-flex cursor-pointer items-center">
+              <label className="relative inline-flex shrink-0 cursor-pointer items-center">
                 <input
                   type="checkbox"
                   checked={form.notificationPreferences.reminders}

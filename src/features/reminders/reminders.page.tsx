@@ -212,13 +212,13 @@ export function PengingatPage() {
                 <div className="min-w-0 flex-1">
                   <p
                     className={cn(
-                      "text-sm font-medium text-main-text",
+                      "truncate text-sm font-medium text-main-text",
                       !r.isActive && "opacity-50 line-through",
                     )}
                   >
                     {r.medicationName}
                   </p>
-                  <p className="text-xs text-secondary-text">
+                  <p className="truncate text-xs text-secondary-text">
                     {r.dosage} · {r.frequency} · {r.time}
                   </p>
                 </div>
