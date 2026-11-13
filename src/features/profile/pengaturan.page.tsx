@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Bell, LogOut, Settings, UserRound, MessageCircle, Save, ShieldCheck, Users, Pill } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
 import { getProfile, updateProfile, type ProfileUpdate } from "@/services/profiles.service";
 import type { NotificationPreferences } from "@/types";
 import { Card } from "@/components/ui/card";
@@ -31,7 +32,7 @@ const defaultForm: FormState = {
 };
 
 export function PengaturanPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, refresh } = useAuth();
   const { add } = useToast();
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(defaultForm);
@@ -97,8 +98,27 @@ export function PengaturanPage() {
         payload.notificationPreferences = form.notificationPreferences;
       }
 
+      const emailChanged =
+        form.email.trim().length > 0 &&
+        form.email.trim().toLowerCase() !== user.email.toLowerCase();
+
+      if (emailChanged) {
+        const { error: emailError } = await supabase.auth.updateUser({
+          email: form.email.trim(),
+        });
+        if (emailError) throw emailError;
+      }
+
       await updateProfile(user.id, payload);
-      add({ title: "Perubahan disimpan", description: "Profil Anda berhasil diperbarui.", variant: "success" });
+      await refresh();
+
+      add({
+        title: "Perubahan disimpan",
+        description: emailChanged
+          ? "Profil diperbarui. Jika konfirmasi email aktif, periksa kotak masuk untuk memverifikasi email baru."
+          : "Profil Anda berhasil diperbarui.",
+        variant: "success",
+      });
     } catch (error) {
       add({
         title: "Gagal menyimpan perubahan",
@@ -121,6 +141,10 @@ export function PengaturanPage() {
         variant: "success",
       });
     } catch (error) {
+      setForm((current) => ({
+        ...current,
+        notificationPreferences: form.notificationPreferences,
+      }));
       add({
         title: "Gagal mengubah notifikasi",
         description: error instanceof Error ? error.message : "Terjadi kesalahan",
@@ -258,7 +282,7 @@ export function PengaturanPage() {
             </p>
             <button
               onClick={() => navigate("/profil")}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
+              className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
             >
               <UserRound className="h-4 w-4" /> Lihat profil
             </button>
@@ -266,19 +290,19 @@ export function PengaturanPage() {
               <>
                 <button
                   onClick={() => navigate("/admin")}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
                 >
                   <ShieldCheck className="h-4 w-4" /> Panel admin
                 </button>
                 <button
                   onClick={() => navigate("/admin/pengguna")}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
                 >
                   <Users className="h-4 w-4" /> Kelola pengguna
                 </button>
                 <button
                   onClick={() => navigate("/admin/obat")}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
                 >
                   <Pill className="h-4 w-4" /> Kelola obat
                 </button>
@@ -286,7 +310,7 @@ export function PengaturanPage() {
             ) : (
               <button
                 onClick={() => navigate("/tanya")}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
+                className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
               >
                 <MessageCircle className="h-4 w-4" /> Tanya apoteker
               </button>
@@ -296,7 +320,7 @@ export function PengaturanPage() {
                 await logout();
                 navigate("/");
               }}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+              className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
             >
               <LogOut className="h-4 w-4" /> Keluar dari akun
             </button>

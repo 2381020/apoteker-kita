@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { TouchEvent as ReactTouchEvent } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface HeroSlide {
@@ -54,72 +55,119 @@ const SLIDES: HeroSlide[] = [
   },
 ];
 
+function preloadImage(src: string) {
+  if (typeof window === "undefined") return;
+  const image = new window.Image();
+  image.decoding = "async";
+  image.src = src;
+}
+
 export function HeroSlider() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [animating, setAnimating] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
-  const goTo = (index: number) => {
-    if (animating || index === active) return;
+  const goTo = useCallback(
+    (index: number) => {
+      if (index === active) return;
+      setActive(index);
+    },
+    [active]
+  );
 
-    setAnimating(true);
-    setActive(index);
-
-    setTimeout(() => {
-      setAnimating(false);
-    }, 500);
-  };
-
-  const next = () => {
+  const next = useCallback(() => {
     goTo((active + 1) % SLIDES.length);
-  };
+  }, [active, goTo]);
 
-  const prev = () => {
+  const prev = useCallback(() => {
     goTo((active - 1 + SLIDES.length) % SLIDES.length);
-  };
+  }, [active, goTo]);
 
   useEffect(() => {
-    if (paused) return;
+    // Muat gambar berikutnya lebih awal agar transisi tidak kosong.
+    preloadImage(SLIDES[(active + 1) % SLIDES.length].image);
+    preloadImage(SLIDES[(active - 1 + SLIDES.length) % SLIDES.length].image);
+  }, [active]);
 
-    const interval = setInterval(() => {
+  useEffect(() => {
+    const reducedMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reducedMotion) return;
+
+    if (paused || userPaused) return;
+
+    const interval = window.setInterval(() => {
       if (document.visibilityState === "visible") {
         setActive((current) => (current + 1) % SLIDES.length);
       }
-    }, 5000);
+    }, 6000);
 
-    return () => clearInterval(interval);
-  }, [paused]);
+    return () => window.clearInterval(interval);
+  }, [paused, userPaused]);
 
   const currentSlide = SLIDES[active];
 
+  const handleTouchStart = (event: ReactTouchEvent) => {
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+    setPaused(true);
+  };
+
+  const handleTouchEnd = (event: ReactTouchEvent) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    setPaused(false);
+
+    if (!start) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+    if (deltaX < 0) {
+      next();
+    } else {
+      prev();
+    }
+  };
+
   return (
     <section
-      className="relative overflow-hidden rounded-2xl border border-border bg-[#FFF9E6]"
+      className="relative overflow-hidden rounded-2xl border border-border bg-[#FFF9E6] touch-pan-y"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      aria-roledescription="carousel"
+      aria-label="Sorotan ApotekerKita"
     >
-      <div className="grid min-h-[320px] items-center gap-6 px-4 py-8 sm:px-10 sm:py-10 lg:min-h-[420px] lg:grid-cols-2 lg:px-14">
-        
+      <div className="grid items-center gap-5 px-4 py-6 pb-14 sm:gap-6 sm:px-10 sm:py-10 sm:pb-16 lg:min-h-[420px] lg:grid-cols-2 lg:px-14">
         {/* Konten teks */}
         <div
           key={`text-${active}`}
           className="relative z-10 flex flex-col items-start animate-fade-in"
         >
-          <span className="mb-4 inline-flex items-center rounded-full bg-[#FFD54F]/30 px-4 py-1.5 text-xs font-semibold text-[#263238]">
+          <span className="mb-3 inline-flex items-center rounded-full bg-[#FFD54F]/30 px-3 py-1.5 text-[11px] font-semibold text-[#263238] sm:mb-4 sm:px-4 sm:text-xs">
             Apoteker Kita · Sahabat Kesehatan
           </span>
 
-          <h1 className="mb-4 max-w-xl text-3xl font-bold leading-tight tracking-tight text-[#263238] sm:text-4xl lg:text-5xl">
+          <h1 className="mb-3 max-w-xl text-2xl font-bold leading-tight tracking-tight text-[#263238] sm:mb-4 sm:text-4xl lg:text-5xl">
             {currentSlide.title}
           </h1>
 
-          <p className="mb-7 max-w-md text-sm leading-relaxed text-[#263238]/75 sm:text-base">
+          <p className="mb-5 max-w-md text-sm leading-relaxed text-[#263238]/75 sm:mb-7 sm:text-base">
             {currentSlide.description}
           </p>
 
           <Link
             to={currentSlide.href}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#263238] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#37474F] hover:shadow-md"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#263238] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#37474F] hover:shadow-md sm:w-auto"
           >
             {currentSlide.cta}
             <ArrowRight className="h-4 w-4" />
@@ -129,13 +177,17 @@ export function HeroSlider() {
         {/* Gambar ilustrasi */}
         <div
           key={`image-${active}`}
-          className="flex h-full min-h-[180px] items-center justify-center animate-fade-in sm:min-h-[220px] lg:min-h-[320px]"
+          className="flex h-[150px] items-center justify-center animate-fade-in sm:h-[240px] lg:h-[320px]"
         >
           <img
             src={currentSlide.image}
             alt={currentSlide.title}
-            className="h-full max-h-[340px] w-full object-contain"
+            width={640}
+            height={420}
+            decoding="async"
+            className="h-full w-full object-contain"
             loading={active === 0 ? "eager" : "lazy"}
+            fetchPriority={active === 0 ? "high" : "auto"}
           />
         </div>
       </div>
@@ -145,7 +197,7 @@ export function HeroSlider() {
         type="button"
         onClick={prev}
         aria-label="Slide sebelumnya"
-        className="absolute left-3 top-1/2 z-20 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:left-5 sm:flex"
+        className="absolute left-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:left-5 sm:flex"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -155,29 +207,39 @@ export function HeroSlider() {
         type="button"
         onClick={next}
         aria-label="Slide berikutnya"
-        className="absolute right-3 top-1/2 z-20 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:right-5 sm:flex"
+        className="absolute right-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:right-5 sm:flex"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
 
-      {/* Indikator slide */}
-      <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
-        {SLIDES.map((slide, index) => (
-          <button
-            key={slide.image}
-            type="button"
-            onClick={() => goTo(index)}
-            aria-label={`Pilih slide ${index + 1}`}
-            aria-current={active === index ? "true" : undefined}
-            className={cn(
-              "h-2 rounded-full transition-all duration-300",
-              active === index
-                ? "w-7 bg-[#263238]"
-                : "w-2 bg-[#263238]/25 hover:bg-[#263238]/50"
-            )}
-          />
-        ))}
+      {/* Indikator slide + kontrol jeda */}
+      <div className="absolute bottom-3 left-0 right-0 z-20 flex items-center justify-center gap-2 px-14">
+        <div className="flex items-center gap-1">
+          {SLIDES.map((slide, index) => (
+            <button
+              key={slide.image}
+              type="button"
+              onClick={() => goTo(index)}
+              aria-label={`Pilih slide ${index + 1}`}
+              aria-current={active === index ? "true" : undefined}
+              className="flex h-8 w-8 items-center justify-center"
+            >
+              <span
+                className={cn(
+                  "h-2 rounded-full transition-all duration-300",
+                  active === index
+                    ? "w-7 bg-[#263238]"
+                    : "w-2 bg-[#263238]/25 hover:bg-[#263238]/50"
+                )}
+              />
+            </button>
+          ))}
+        </div>
       </div>
+
+      <span className="sr-only" aria-live="polite">
+        Slide {active + 1} dari {SLIDES.length}: {currentSlide.title}
+      </span>
     </section>
   );
 }

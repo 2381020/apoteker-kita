@@ -44,7 +44,7 @@
     /* Ukuran layout utama (selaras di semua halaman) */
     --layout-max: 1440px;
     --navbar-h: 3.5rem;
-    --topbar-h: 2rem;
+    --topbar-h: calc(2rem + var(--safe-top));
     --sidebar-w: 16rem;
     --sidebar-top: calc(var(--topbar-h) + var(--navbar-h));
     --sidebar-height: calc(100vh - var(--topbar-h) - var(--navbar-h));
@@ -55,6 +55,12 @@
     --paper: 255 255 255;
     --footer: 22 78 73;
     --footer-hover: 27 96 90;
+
+    /* Safe area untuk perangkat dengan poni / gesture bar */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
   }
 
   * {
@@ -76,7 +82,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     line-height: 1.6;
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   ::selection {
@@ -203,8 +209,49 @@
   }
 }
 
+@layer utilities {
+  .pb-safe {
+    padding-bottom: calc(1rem + var(--safe-bottom));
+  }
+
+  .pt-safe {
+    padding-top: calc(1rem + var(--safe-top));
+  }
+
+  .px-safe {
+    padding-left: calc(1rem + var(--safe-left));
+    padding-right: calc(1rem + var(--safe-right));
+  }
+
+  .bottom-safe {
+    bottom: calc(1rem + var(--safe-bottom));
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .logo-marquee-track {
   will-change: transform;
+}
+
+.auth-background {
+  background-image: url("/images/login-background.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 639px) {
+  .auth-background {
+    background-image: url("/images/login-background-sm.jpg");
+  }
 }
 
 /* Cegah zoom otomatis iOS saat fokus input di layar kecil */

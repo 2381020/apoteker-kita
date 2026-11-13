@@ -75,8 +75,23 @@ const toInsert = async (input: GuideInput): Promise<Insert> => {
   };
 };
 
-// Mengambil seluruh panduan
-export async function listGuides(): Promise<Guide[]> {
+const GUIDES_CACHE_TTL = 60_000;
+let guidesCache: { data: Guide[]; at: number } | null = null;
+
+export function invalidateGuidesCache(): void {
+  guidesCache = null;
+}
+
+// Mengambil seluruh panduan (dengan cache singkat agar navigasi terasa instan)
+export async function listGuides(force = false): Promise<Guide[]> {
+  if (
+    !force &&
+    guidesCache &&
+    Date.now() - guidesCache.at < GUIDES_CACHE_TTL
+  ) {
+    return guidesCache.data;
+  }
+
   const { data, error } = await supabase
     .from("guides")
     .select("*")
@@ -84,7 +99,9 @@ export async function listGuides(): Promise<Guide[]> {
 
   if (error) throw error;
 
-  return (data ?? []).map(toGuide);
+  const guides = (data ?? []).map(toGuide);
+  guidesCache = { data: guides, at: Date.now() };
+  return guides;
 }
 
 // Membuat panduan baru
@@ -99,6 +116,7 @@ export async function createGuide(input: GuideInput): Promise<Guide> {
 
   if (error) throw error;
 
+  invalidateGuidesCache();
   return toGuide(data);
 }
 
@@ -118,6 +136,7 @@ export async function updateGuide(
 
   if (error) throw error;
 
+  invalidateGuidesCache();
   return toGuide(data);
 }
 
@@ -129,4 +148,6 @@ export async function deleteGuide(id: string): Promise<void> {
     .eq("id", id);
 
   if (error) throw error;
+
+  invalidateGuidesCache();
 }

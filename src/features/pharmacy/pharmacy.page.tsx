@@ -35,7 +35,7 @@ function PharmacyCard({ pharmacy }: { pharmacy: Pharmacy }) {
   };
 
   return (
-    <Card className="flex h-full flex-col p-5 transition-shadow duration-200 hover:shadow-soft">
+    <Card className="flex h-full flex-col p-4 transition-shadow duration-200 hover:shadow-soft sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">

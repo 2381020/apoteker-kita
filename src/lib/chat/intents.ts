@@ -19,12 +19,18 @@ const EMERGENCY_KEYWORDS = [
   "bab berdarah",
   "bengkak wajah",
   "bengkak di wajah",
+  "bengkak bibir",
+  "bengkak tenggorokan",
+  "sulit menelan",
   "anafilaksis",
   "syok",
   "stroke",
   "serangan jantung",
   "henti jantung",
+  "tidak sadarkan diri",
+  "kehilangan kesadaran",
   "bunuh diri",
+  "ingin mengakhiri hidup",
 ];
 
 const GREETING_KEYWORDS = [
@@ -34,10 +40,12 @@ const GREETING_KEYWORDS = [
   "hello",
   "selamat pagi",
   "selamat siang",
+  "selamat sore",
   "selamat malam",
   "terima kasih",
   "makasih",
   "assalamualaikum",
+  "permisi",
 ];
 
 const INTERACTION_KEYWORDS = [
@@ -47,13 +55,27 @@ const INTERACTION_KEYWORDS = [
   "dikombinasikan",
   "dicampur",
   "bersamaan",
-  "bersama",
+  "bersama-sama",
+  "bersamaan",
   "bolehkah saya minum",
+  "boleh diminum bersama",
   "aman tidak",
   "aman kah",
+  "efek gabungan",
+  "dikonsumsi bersamaan",
 ];
 
-const DOSAGE_KEYWORDS = ["dosis", "takaran", "berapa banyak", "berapa kali", "berapa tablet"];
+const DOSAGE_KEYWORDS = [
+  "dosis",
+  "takaran",
+  "berapa banyak",
+  "berapa kali",
+  "berapa tablet",
+  "berapa mg",
+  "dosis anak",
+  "dosis dewasa",
+  "frekuensi minum",
+];
 
 const STORAGE_KEYWORDS = [
   "simpan",
@@ -62,7 +84,9 @@ const STORAGE_KEYWORDS = [
   "disimpan",
   "kulkas",
   "lemari es",
+  "lemari pendingin",
   "suhu",
+  "suhu ruang",
   "kadaluarsa",
   "kedaluwarsa",
   "expired",
@@ -91,6 +115,27 @@ const EDUCATION_KEYWORDS = [
   "tips",
   "cara minum",
   "aturan minum",
+  "apakah boleh",
+  "bolehkah",
+  "aman",
+  "bahaya",
+  "manfaat",
+  "kegunaan",
+  "kenapa",
+  "mengapa",
+  "sebaiknya",
+  "hamil",
+  "menyusui",
+  "anak",
+  "lansia",
+  "alkohol",
+  "kopi",
+  "kafein",
+  "merokok",
+  "vitamin",
+  "suplemen",
+  "herbal",
+  "jamu",
 ];
 
 export function isEmergency(text: string): boolean {

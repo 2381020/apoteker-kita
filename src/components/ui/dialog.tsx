@@ -81,7 +81,7 @@ export function Dialog({ open, onOpenChange, title, description, children, class
       aria-modal="true"
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descriptionId : undefined}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onOpenChange(false);
       }}
@@ -94,18 +94,18 @@ export function Dialog({ open, onOpenChange, title, description, children, class
       <div
         ref={panelRef}
         className={cn(
-          "relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-lg flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-soft sm:max-h-[calc(100dvh-2rem)]",
+          "relative flex max-h-[calc(100dvh-0.5rem)] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border border-border bg-surface shadow-soft sm:max-h-[calc(100dvh-2rem)] sm:rounded-lg",
           className
         )}
       >
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 rounded-md p-1.5 text-secondary-text opacity-70 transition-colors hover:bg-accent hover:text-main-text hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text opacity-70 transition-colors hover:bg-accent hover:text-main-text hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:right-4 sm:top-4 sm:h-auto sm:w-auto sm:p-1.5"
           aria-label="Tutup"
         >
           <X className="h-4 w-4" />
         </button>
-        <div className="overflow-y-auto p-4 sm:p-6">
+        <div className="overflow-y-auto p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:p-6">
           {title && (
             <h2 id={titleId} className="pr-8 text-lg font-semibold text-main-text sm:text-xl">
               {title}

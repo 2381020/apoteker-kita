@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Pill,
@@ -9,7 +9,6 @@ import {
   MessageCircle,
   ShieldCheck,
   ArrowRight,
-  CheckCircle2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,9 +16,7 @@ import { Card } from "@/components/ui/card";
 import { HeroSlider } from "@/components/ui/hero-slider";
 import { PlaceholderImage } from "@/components/shared/placeholder-image";
 import { listGuides } from "@/services/guides.service";
-import type { Guide } from "@/types";
 import { EmptyState } from "@/components/shared/empty-state";
-import { PageSkeleton } from "@/components/shared/page-skeleton";
 
 const features = [
   {
@@ -69,69 +66,77 @@ const LOGO_CAROUSEL = [
   },
   {
     label: "Guardian",
-    href: "https://www.guardian.co.id",
+    href: "https://guardianindonesia.co.id/",
     logoUrl:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaog5WpauZJd-HOL6qcUNLC8P_pqSWohrklCj0hDONcFMty7tWIKqyOXk4&s=10",
   },
   {
     label: "Century",
-    href: "https://www.century.co.id",
+    href: "https://century-pharma.com/marketplace",
     logoUrl:
       "https://majalahfranchise.com/wp-content/uploads/2020/07/century-1.png",
   },
   {
     label: "Apotek K24",
-    href: "https://www.apotekk24.co.id",
+    href: "https://www.k24klik.com/",
     logoUrl:
       "https://www.apotek-k24.com/images/post/340080193420230126030135yunita.isnalogo%20Apotek%20K-24.jpg.webp",
   },
   {
     label: "Medifarma",
-    href: "https://www.medifarma.co.id",
+    href: "https://www.medifarma.biz/",
     logoUrl: "https://career.medifarma.biz/img/logo_MLI.png",
   },
 ];
 
+type Article = {
+  title: string;
+  category: string;
+  excerpt: string;
+  imageUrl: string;
+  href: string;
+};
+
 export function BerandaPage() {
-  const [articles, setArticles] = useState<
-    {
-      title: string;
-      category: string;
-      excerpt: string;
-      imageUrl: string;
-      href: string;
-    }[]
-  >([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [guideError, setGuideError] = useState(false);
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setGuideError(false);
+
     listGuides()
       .then((rows) => {
-        if (active) {
-          const transformed = rows.map((guide) => ({
-            title: guide.title,
-            category: guide.category,
-            excerpt: guide.summary,
-            imageUrl: guide.imageUrl || "/images/placeholder.png",
-            href: "/panduan",
-          }));
-          setArticles(transformed);
-        }
+        if (!active) return;
+        const transformed = rows.slice(0, 6).map((guide) => ({
+          title: guide.title,
+          category: guide.category,
+          excerpt: guide.summary,
+          imageUrl: guide.imageUrl || "/images/placeholder.jpg",
+          href: "/panduan",
+        }));
+        setArticles(transformed);
       })
       .catch(() => {
-        if (active) setArticles([]);
+        if (!active) return;
+        setArticles([]);
+        setGuideError(true);
       })
       .finally(() => {
         if (active) setLoading(false);
       });
+
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadToken]);
 
-  if (loading) return <PageSkeleton />;
+  const retryGuides = useCallback(() => {
+    setReloadToken((value) => value + 1);
+  }, []);
 
   return (
     <div className="animate-fade-in space-y-8 sm:space-y-10">
@@ -154,7 +159,7 @@ export function BerandaPage() {
               <p className="mt-4 text-base leading-relaxed text-secondary-text sm:text-lg">
                 ApotekerKita membantu Anda memahami obat, memeriksa interaksi,
                 menghitung dosis, dan mengelola jadwal minum obat — semua dalam
-                satu tempat, tanpa perlu koneksi internet.
+                satu tempat.
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -179,8 +184,7 @@ export function BerandaPage() {
               </div>
             </div>
 
-            {/* Pengingat Hari Ini - Illustrative Image */}
-            <div className="relative lg:block md:mt-12">
+            <div className="relative md:mt-12 lg:mt-0">
               <PlaceholderImage
                 src="/images/obat.png"
                 alt="Ilustrasi obat sehari-hari"
@@ -204,13 +208,13 @@ export function BerandaPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {features.map((f) => {
             const Icon = f.icon;
 
             return (
               <Link key={f.href} to={f.href} className="group">
-                <Card className="h-full p-5 transition-all group-hover:border-primary/40 group-hover:shadow-soft">
+                <Card className="h-full p-4 transition-all group-hover:border-primary/40 group-hover:shadow-soft sm:p-5">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
                     <Icon className="h-5 w-5" />
                   </div>
@@ -250,24 +254,41 @@ export function BerandaPage() {
           </Link>
         </div>
 
-        {articles.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {[0, 1, 2].map((item) => (
+              <Card key={item} className="h-full animate-pulse p-4 sm:p-5">
+                <div className="mb-4 h-40 w-full rounded-md bg-muted sm:h-48" />
+                <div className="h-5 w-20 rounded-full bg-muted" />
+                <div className="mt-3 h-5 w-4/5 rounded bg-muted" />
+                <div className="mt-2 h-4 w-full rounded bg-muted" />
+                <div className="mt-2 h-4 w-2/3 rounded bg-muted" />
+              </Card>
+            ))}
+          </div>
+        ) : guideError ? (
+          <EmptyState
+            title="Panduan belum dapat dimuat"
+            description="Periksa koneksi Anda, lalu coba muat ulang."
+            actionLabel="Coba lagi"
+            onAction={retryGuides}
+          />
+        ) : articles.length === 0 ? (
           <EmptyState
             title="Panduan tidak ditemukan"
-            description="Coba gunakan kata kunci lain atau pilih kategori yang berbeda."
-            actionLabel="Reset filter"
-            onAction={() => {}}
+            description="Panduan kesehatan akan tampil di sini setelah tersedia."
           />
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             {articles.map((a) => (
               <Card
                 key={a.title}
-                className="group flex h-full flex-col p-5 transition-shadow hover:shadow-soft"
+                className="group flex h-full flex-col p-4 transition-shadow hover:shadow-soft sm:p-5"
               >
                 <PlaceholderImage
                   src={a.imageUrl}
                   alt={a.title}
-                  className="w-full h-48 object-cover rounded-md mb-4"
+                  className="mb-4 h-40 w-full rounded-md object-cover sm:h-48"
                 />
 
                 <span className="w-fit rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-secondary">
@@ -294,9 +315,9 @@ export function BerandaPage() {
         )}
       </section>
 
-      {/* Infinite Logo Carousel */}
-      <section className="overflow-hidden border-y border-border py-10 sm:py-14">
-        <p className="mb-6 text-center text-xs font-semibold uppercase tracking-wider text-secondary-text">
+      {/* Logo carousel */}
+      <section className="overflow-hidden border-y border-border py-8 sm:py-14">
+        <p className="mb-5 px-4 text-center text-xs font-semibold uppercase tracking-wider text-secondary-text sm:mb-6">
           Dipercaya oleh berbagai apotek di Indonesia
         </p>
 
@@ -311,38 +332,10 @@ export function BerandaPage() {
             aria-hidden="true"
           />
 
-          <div className="logo-marquee-track flex w-max animate-marquee gap-10 pr-10">
+          {/* gap dan pr harus sama agar loop marquee mulus */}
+          <div className="logo-marquee-track flex w-max animate-marquee items-center gap-12 pr-12 sm:gap-28 sm:pr-28">
             {[...LOGO_CAROUSEL, ...LOGO_CAROUSEL].map((logo, idx) => {
               const isDuplicate = idx >= LOGO_CAROUSEL.length;
-
-              const LogoImg = logo.logoUrl ? (
-                <img
-                  src={logo.logoUrl}
-                  alt={logo.label}
-                  className="h-14 w-auto object-contain"
-                  loading="lazy"
-                />
-              ) : (
-                <svg
-                  viewBox="0 0 120 40"
-                  preserveAspectRatio="xMidYMid meet"
-                  className="h-8 w-24 object-contain"
-                  aria-label={logo.label}
-                >
-                  <text
-                    x="50%"
-                    y="50%"
-                    fontFamily="Arial, sans-serif"
-                    fontSize="22"
-                    fontWeight="700"
-                    fill="currentColor"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                  >
-                    {logo.label}
-                  </text>
-                </svg>
-              );
 
               return (
                 <a
@@ -350,13 +343,22 @@ export function BerandaPage() {
                   href={logo.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block"
+                  className="flex h-12 shrink-0 items-center justify-center transition duration-300 ease-out sm:h-[70px]"
                   aria-hidden={isDuplicate || undefined}
                   tabIndex={isDuplicate ? -1 : undefined}
                 >
-                  <div className="flex h-16 w-40 shrink-0 items-center justify-center transition duration-300 ease-out">
-                    {LogoImg}
-                  </div>
+                  {logo.logoUrl ? (
+                    <img
+                      src={logo.logoUrl}
+                      alt={logo.label}
+                      className="h-12 w-auto max-w-[180px] object-contain sm:h-[70px]"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="text-center text-sm font-semibold leading-tight">
+                      {logo.label}
+                    </span>
+                  )}
                 </a>
               );
             })}

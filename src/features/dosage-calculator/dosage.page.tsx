@@ -544,7 +544,7 @@ export function DosisPage() {
           {result ? (
             <div className="space-y-4">
               {/* Info Pasien */}
-              <div className="rounded-xl bg-secondary-soft p-4">
+              <div className="rounded-xl bg-muted p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
                   Pasien
                 </p>
@@ -641,7 +641,7 @@ export function DosisPage() {
                       ? "bg-warning/10 border border-warning"
                       : result.statusValidasi === "melebihi_batas"
                         ? "bg-destructive/10 border border-destructive"
-                        : "bg-secondary-soft border border-border"
+                        : "bg-muted border border-border"
                 }`}
               >
                 <p className="text-xs font-medium uppercase tracking-wide">
@@ -666,7 +666,7 @@ export function DosisPage() {
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-3 px-3 text-center text-secondary-text">
               <Calculator className="h-12 w-12 opacity-50" />
-              <p>Masukkan data pasien di kiri lalu klik "Hitung Dosis"</p>
+              <p>Masukkan data pasien terlebih dahulu, lalu klik &quot;Hitung Dosis&quot;.</p>
             </div>
           )}
         </Card>

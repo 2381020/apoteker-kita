@@ -32,7 +32,7 @@ function MedicationCard({
   onSelect: (medication: Medication) => void;
 }) {
   return (
-    <Card className="flex h-full flex-col p-5 transition-shadow duration-200 hover:shadow-soft">
+    <Card className="flex h-full flex-col p-4 transition-shadow duration-200 hover:shadow-soft sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
@@ -346,10 +346,11 @@ export function ObatPage() {
             <Button
               variant="outline"
               onClick={resetFilters}
-              className="shrink-0"
+              aria-label="Reset filter"
+              className="shrink-0 px-3"
             >
-              <RotateCcw size={15} className="mr-1.5" />
-              Reset
+              <RotateCcw size={15} className="sm:mr-1.5" />
+              <span className="hidden sm:inline">Reset</span>
             </Button>
           )}
         </div>

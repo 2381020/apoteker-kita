@@ -4,6 +4,8 @@ import { router } from "./router";
 import { ToastProvider } from "@/components/ui/toast";
 import { ChatProvider } from "@/features/chatbot/chat-provider";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { LanguageProvider } from "@/lib/i18n";
+import { ThemeProvider } from "@/lib/theme";
 
 function ConfigNotice() {
   return (
@@ -37,12 +39,16 @@ export function App() {
   if (!isSupabaseConfigured) return <ConfigNotice />;
 
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <ChatProvider>
-          <RouterProvider router={router} />
-        </ChatProvider>
-      </ToastProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <ChatProvider>
+              <RouterProvider router={router} />
+            </ChatProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }

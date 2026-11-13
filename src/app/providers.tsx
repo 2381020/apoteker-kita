@@ -41,6 +41,24 @@ function mapUser(authUser: SupabaseUser, profile: Profile | null): User {
   };
 }
 
+async function fetchProfileWithRetry(userId: string): Promise<Profile | null> {
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await getProfile(userId);
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        await new Promise((resolve) => window.setTimeout(resolve, 400 * (attempt + 1)));
+      }
+    }
+  }
+
+  console.warn("Gagal memuat profil pengguna:", lastError);
+  return null;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,14 +68,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       return null;
     }
-    let profile: Profile | null = null;
-    try {
-      profile = await getProfile(authUser.id);
-    } catch {
-      profile = null;
-    }
+
+    const profile = await fetchProfileWithRetry(authUser.id);
     const mapped = mapUser(authUser, profile);
-    setUser(mapped);
+
+    // Jika profil gagal dimuat sementara, pertahankan role yang sudah diketahui
+    // agar admin tidak tiba-tiba diturunkan menjadi pasien.
+    setUser((previous) =>
+      !profile && previous?.id === authUser.id
+        ? { ...mapped, role: previous.role }
+        : mapped
+    );
     return mapped;
   }, []);
 
@@ -65,10 +86,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let active = true;
 
     void (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!active) return;
-      await loadUser(data.session?.user ?? null);
-      if (active) setLoading(false);
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!active) return;
+        await loadUser(data.session?.user ?? null);
+      } catch (error) {
+        console.warn("Gagal memuat sesi pengguna:", error);
+      } finally {
+        if (active) setLoading(false);
+      }
     })();
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -116,6 +142,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const refresh = useCallback(async () => {
+    const { data } = await supabase.auth.getSession();
+    await loadUser(data.session?.user ?? null);
+  }, [loadUser]);
+
   const value = useMemo(
     () => ({
       user,
@@ -126,8 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       logout,
+      refresh,
     }),
-    [user, loading, login, register, logout]
+    [user, loading, login, register, logout, refresh]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

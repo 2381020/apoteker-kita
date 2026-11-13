@@ -101,7 +101,7 @@ function WelcomeMessage({
   onSuggestionClick: (text: string) => void;
 }) {
   return (
-    <div className="flex flex-col items-center px-4 pt-10 text-center sm:pt-16">
+    <div className="flex flex-col items-center px-3 pt-6 text-center sm:px-4 sm:pt-16">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-primary">
         <MessageCircle className="h-8 w-8" />
       </div>
@@ -162,7 +162,7 @@ export function TanyaPage() {
         icon={MessageCircle}
       />
 
-      <div className="flex h-[70dvh] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-card">
+      <div className="flex h-[68dvh] min-h-[360px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-card sm:min-h-[420px]">
         {/* Header chat */}
         <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-4 sm:px-5">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary">

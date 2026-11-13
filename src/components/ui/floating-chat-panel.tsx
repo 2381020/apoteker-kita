@@ -257,7 +257,9 @@ export function FloatingChatPanel({
     <div
       className={cn(
         "pointer-events-none fixed z-40 flex flex-col items-end",
-        isMobile ? "bottom-4 left-4 right-4" : "bottom-10 right-6",
+        isMobile
+          ? "bottom-[calc(1rem+var(--safe-bottom))] left-4 right-4 sm:bottom-10 sm:left-auto sm:right-6"
+          : "bottom-10 right-6",
       )}
     >
       {!isOpen && (
@@ -276,7 +278,7 @@ export function FloatingChatPanel({
             "pointer-events-auto flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-soft",
             "animate-fade-in",
             isMobile
-              ? "h-[min(500px,calc(100dvh-140px))] w-full max-w-sm mx-auto"
+              ? "h-[min(560px,calc(100dvh-7rem))] w-full max-w-sm mx-auto"
               : "h-[560px] w-[380px] max-w-[calc(100vw-32px)]",
           )}
         >
@@ -318,7 +320,7 @@ export function FloatingChatPanel({
                 disabled={messages.length === 0}
                 aria-label="Hapus riwayat percakapan"
                 title="Hapus riwayat percakapan"
-                className="rounded-lg p-2 text-secondary-text transition-colors hover:bg-accent hover:text-main-text disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text transition-colors hover:bg-accent hover:text-main-text disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -327,7 +329,7 @@ export function FloatingChatPanel({
                 type="button"
                 onClick={closeChat}
                 aria-label="Tutup chat"
-                className="rounded-lg p-2 text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
               >
                 <X className="h-4 w-4" />
               </button>

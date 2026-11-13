@@ -92,24 +92,42 @@ async function detectDrugs(query: string): Promise<string[]> {
   return uniqueNames(names).slice(0, MAX_DRUGS);
 }
 
+function isFollowUpQuestion(query: string): boolean {
+  const normalized = query.toLowerCase();
+  return (
+    /(^|\s)(kalau|kalo|bagaimana|gimana|dan|dengan|sama|nya|tadi|tersebut|itu|juga|lainnya|lain|kombinasi|bersamaan|plus)(\s|$|\?)/.test(
+      normalized
+    ) ||
+    /\+/.test(normalized) ||
+    /dosisnya|efeknya|interaksinya|harganya|fungsinya|kegunaannya|aman(nya)?/.test(
+      normalized
+    )
+  );
+}
+
 async function detectDrugsWithContext(
   query: string,
   history: ChatMessage[]
 ): Promise<string[]> {
   const direct = await detectDrugs(query);
-  if (direct.length > 0) return direct;
+
+  if (direct.length >= 2) return direct.slice(0, MAX_DRUGS);
+  if (direct.length === 1 && !isFollowUpQuestion(query)) return direct;
 
   const recent = history
-    .filter((message) => message.isUser && message.text !== query)
-    .slice(-3)
+    .filter((message) => message.isUser && message.text.trim() !== query.trim())
+    .slice(-4)
     .reverse();
 
+  const contextNames: string[] = [];
   for (const message of recent) {
     const names = await detectDrugs(message.text);
-    if (names.length > 0) return names;
+    contextNames.push(...names);
+    if (uniqueNames(contextNames).length >= 2) break;
   }
 
-  return [];
+  const merged = uniqueNames([...direct, ...contextNames]);
+  return merged.slice(0, MAX_DRUGS);
 }
 
 async function findMedication(name: string): Promise<MedicationRow | null> {

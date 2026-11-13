@@ -3,6 +3,7 @@ import { SidebarNav } from "@/components/layout/SidebarNav";
 import { useAuth } from "@/hooks/useAuth";
 import {
   SIDEBAR_ADMIN,
+  SIDEBAR_LAYANAN,
   SIDEBAR_UTAMA,
   SIDEBAR_AKUN,
 } from "@/lib/nav-config";
@@ -22,10 +23,12 @@ export function Sidebar({
   const groups = isAdmin
     ? [
         { title: "Admin", items: SIDEBAR_ADMIN },
+        { title: "Layanan", items: SIDEBAR_LAYANAN },
         { title: "Akun", items: SIDEBAR_AKUN },
       ]
     : [
         { title: "Menu", items: SIDEBAR_UTAMA },
+        { title: "Layanan", items: SIDEBAR_LAYANAN },
         { title: "Akun", items: SIDEBAR_AKUN },
       ];
 

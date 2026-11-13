@@ -58,7 +58,7 @@ export function RiwayatPage() {
       />
 
       <Card className="overflow-hidden">
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border px-4 py-4 sm:px-5">
           <h2 className="text-base font-semibold text-main-text">
             Semua Riwayat
           </h2>
@@ -78,7 +78,7 @@ export function RiwayatPage() {
               return (
                 <li
                   key={h.id}
-                  className="flex items-center justify-between gap-3 px-5 py-4"
+                  className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5 sm:py-4"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-main-text">

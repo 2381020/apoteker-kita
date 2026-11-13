@@ -264,13 +264,14 @@ export function ImportInteractionsPage() {
           variant="outline"
           onClick={() => setResetOpen(true)}
           disabled={resetting}
+          className="w-full sm:w-auto"
         >
           <RotateCcw className="mr-1.5 h-4 w-4" />
           Hapus Data DDInter
         </Button>
       </PageHeader>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="p-4 sm:p-6">
         <div
           onDragOver={(event) => {
             event.preventDefault();
@@ -282,7 +283,7 @@ export function ImportInteractionsPage() {
             setDragging(false);
             void handleFiles(event.dataTransfer.files);
           }}
-          className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
+          className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors sm:px-6 sm:py-10 ${
             dragging
               ? "border-primary bg-primary-soft"
               : "border-border bg-muted/30"
@@ -310,7 +311,7 @@ export function ImportInteractionsPage() {
           />
 
           <Button
-            className="mt-4"
+            className="mt-4 w-full sm:w-auto"
             onClick={() => inputRef.current?.click()}
             disabled={parsing || importing}
           >
@@ -378,8 +379,12 @@ export function ImportInteractionsPage() {
         )}
 
         {!parsing && rows.length > 0 && (
-          <div className="mt-5 overflow-x-auto rounded-lg border border-border">
-            <table className="w-full min-w-[560px] text-left text-sm">
+          <div className="mt-5">
+            <p className="mb-2 text-xs text-secondary-text sm:hidden">
+              Geser tabel ke samping untuk melihat semua kolom.
+            </p>
+            <div className="overflow-x-auto rounded-lg border border-border">
+              <table className="w-full min-w-[480px] text-left text-sm sm:min-w-[560px]">
               <thead>
                 <tr className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-secondary-text">
                   <th className="px-3 py-2 font-semibold">Obat A</th>
@@ -406,6 +411,7 @@ export function ImportInteractionsPage() {
                 Menampilkan 10 dari {rows.length.toLocaleString("id-ID")} baris.
               </p>
             )}
+          </div>
           </div>
         )}
 
@@ -464,7 +470,7 @@ export function ImportInteractionsPage() {
       </Card>
 
       {result && (
-        <Card className="p-5 sm:p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex items-start gap-3">
             {result.errors.length === 0 ? (
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
@@ -485,7 +491,7 @@ export function ImportInteractionsPage() {
       )}
 
       {allErrors.length > 0 && (
-        <Card className="p-5 sm:p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-base font-semibold text-main-text">
               <AlertTriangle size={18} className="text-warning" />

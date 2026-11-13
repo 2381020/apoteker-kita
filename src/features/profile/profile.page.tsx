@@ -137,16 +137,16 @@ export function ProfilePage() {
       {/* Profile Card */}
       <Card className="overflow-hidden border-border bg-white shadow-sm">
         {/* Banner */}
-        <div className="relative h-32 overflow-hidden bg-gradient-to-r from-primary/15 via-primary/30 to-primary/10">
+        <div className="relative h-24 overflow-hidden bg-gradient-to-r from-primary/15 via-primary/30 to-primary/10 sm:h-32">
           <div className="absolute -right-10 -top-20 h-56 w-56 rounded-full border-[30px] border-white/20" />
           <div className="absolute -right-2 -bottom-24 h-48 w-48 rounded-full bg-primary/10" />
         </div>
 
-        <div className="px-5 pb-6 sm:px-8">
+        <div className="px-4 pb-6 sm:px-8">
           {/* Profile Identity */}
-          <div className="-mt-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="-mt-10 flex flex-col gap-5 sm:-mt-12 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
-              <Avatar className="h-24 w-24 shrink-0 border-4 border-white shadow-md">
+              <Avatar className="h-20 w-20 shrink-0 border-4 border-white shadow-md sm:h-24 sm:w-24">
                 <AvatarImage
                   src={profile?.profilePicture || user?.profilePicture}
                   alt={fullName}
@@ -174,7 +174,7 @@ export function ProfilePage() {
               </div>
             </div>
 
-            <Button asChild variant="outline" className="shrink-0">
+            <Button asChild variant="outline" className="w-full shrink-0 sm:w-auto">
               <Link to="/pengaturan">
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit Profil

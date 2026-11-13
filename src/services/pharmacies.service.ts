@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import { parseSpreadsheetFile } from "@/lib/parse-spreadsheet";
 import type { Database } from "@/lib/database.types";
 import type { Pharmacy } from "@/types";
 
@@ -44,15 +43,34 @@ const toInsert = (input: PharmacyInput): Insert => ({
   image_url: input.imageUrl ?? null,
 });
 
-export async function listPharmacies(): Promise<Pharmacy[]> {
+const PHARMACIES_CACHE_TTL = 60_000;
+let pharmaciesCache: { data: Pharmacy[]; at: number } | null = null;
+
+export function invalidatePharmaciesCache(): void {
+  pharmaciesCache = null;
+}
+
+export async function listPharmacies(force = false): Promise<Pharmacy[]> {
+  if (
+    !force &&
+    pharmaciesCache &&
+    Date.now() - pharmaciesCache.at < PHARMACIES_CACHE_TTL
+  ) {
+    return pharmaciesCache.data;
+  }
+
   const { data, error } = await supabase.from("pharmacies").select("*").order("name");
   if (error) throw error;
-  return (data ?? []).map(toPharmacy);
+
+  const pharmacies = (data ?? []).map(toPharmacy);
+  pharmaciesCache = { data: pharmacies, at: Date.now() };
+  return pharmacies;
 }
 
 export async function createPharmacy(input: PharmacyInput): Promise<Pharmacy> {
   const { data, error } = await supabase.from("pharmacies").insert(toInsert(input)).select().single();
   if (error) throw error;
+  invalidatePharmaciesCache();
   return toPharmacy(data);
 }
 
@@ -64,12 +82,14 @@ export async function updatePharmacy(id: string, input: PharmacyInput): Promise<
     .select()
     .single();
   if (error) throw error;
+  invalidatePharmaciesCache();
   return toPharmacy(data);
 }
 
 export async function deletePharmacy(id: string): Promise<void> {
   const { error } = await supabase.from("pharmacies").delete().eq("id", id);
   if (error) throw error;
+  invalidatePharmaciesCache();
 }
 
 // SPREADSHEET IMPORT (CSV / XLSX)
@@ -101,6 +121,7 @@ export async function importPharmaciesFromFile(
   };
 
   try {
+    const { parseSpreadsheetFile } = await import("@/lib/parse-spreadsheet");
     const rows = await parseSpreadsheetFile<CsvPharmacyRow>(file);
     const newRows: PharmacyInput[] = [];
 
@@ -139,7 +160,7 @@ export async function importPharmaciesFromFile(
         city,
         phone,
         distance: distance || "0",
-        rating: isOpen ? rating : 0,
+        rating: Number.isFinite(rating) ? rating : 0,
         isOpen,
         services,
         imageUrl: undefined,
@@ -170,6 +191,7 @@ export async function importPharmaciesFromFile(
         importResult.errors.push(`Gagal menyimpan data: ${error.message}`);
       } else {
         importResult.inserted = data?.length ?? 0;
+        invalidatePharmaciesCache();
       }
     }
   } catch (err) {

@@ -76,7 +76,7 @@ export function DashboardPage() {
         </Button>
       </PageHeader>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard
           title="Total Obat"
           value={reminders.length}
@@ -102,14 +102,14 @@ export function DashboardPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-4 sm:px-5">
             <h2 className="flex items-center gap-2 text-base font-semibold text-main-text">
               <CalendarClock className="h-5 w-5 text-primary" />
               Pengingat Mendatang
             </h2>
             <Link
               to="/pengingat"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
+              className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary sm:text-sm"
             >
               Lihat semua <ArrowRight className="h-4 w-4" />
             </Link>
@@ -151,14 +151,14 @@ export function DashboardPage() {
         </Card>
 
         <Card className="overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-4 sm:px-5">
             <h2 className="flex items-center gap-2 text-base font-semibold text-main-text">
               <CheckCircle2 className="h-5 w-5 text-success" />
               Riwayat Terkini
             </h2>
             <Link
               to="/riwayat"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
+              className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary sm:text-sm"
             >
               Lihat semua <ArrowRight className="h-4 w-4" />
             </Link>
@@ -211,7 +211,7 @@ export function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center">
+      <Card className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
           <Pill className="h-6 w-6" />
         </div>
@@ -224,11 +224,11 @@ export function DashboardPage() {
             obat baru.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link to="/interaksi">Cek Interaksi</Link>
           </Button>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link to="/tanya">Tanya Apoteker</Link>
           </Button>
         </div>

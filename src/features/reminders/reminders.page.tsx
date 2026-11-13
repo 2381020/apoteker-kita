@@ -173,7 +173,7 @@ export function PengingatPage() {
       </PageHeader>
 
       <Card className="overflow-hidden">
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border px-4 py-4 sm:px-5">
           <h2 className="text-base font-semibold text-main-text">
             Daftar Pengingat
           </h2>
@@ -191,23 +191,27 @@ export function PengingatPage() {
         ) : (
           <ul className="divide-y divide-border">
             {reminders.map((r) => (
-              <li key={r.id} className="flex items-center gap-3 px-5 py-4">
+              <li key={r.id} className="flex items-center gap-2 px-4 py-3 sm:gap-3 sm:px-5 sm:py-4">
                 <button
                   onClick={() => toggle(r)}
                   aria-label={
                     r.isActive ? "Nonaktifkan pengingat" : "Aktifkan pengingat"
                   }
                   aria-pressed={r.isActive}
-                  className={cn(
-                    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                    r.isActive
-                      ? "border-success bg-success"
-                      : "border-border bg-surface hover:border-success/50",
-                  )}
+                  className="-ml-2 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
                 >
-                  {r.isActive && (
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  )}
+                  <span
+                    className={cn(
+                      "flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors",
+                      r.isActive
+                        ? "border-success bg-success"
+                        : "border-border bg-surface hover:border-success/50",
+                    )}
+                  >
+                    {r.isActive && (
+                      <CheckCircle2 className="h-4 w-4 text-white" />
+                    )}
+                  </span>
                 </button>
                 <div className="min-w-0 flex-1">
                   <p
@@ -237,7 +241,7 @@ export function PengingatPage() {
                   variant="ghost"
                   onClick={() => openEdit(r)}
                   aria-label={`Edit pengingat ${r.medicationName}`}
-                  className="h-9 w-9 shrink-0"
+                  className="h-11 w-11 shrink-0 sm:h-9 sm:w-9"
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
@@ -246,7 +250,7 @@ export function PengingatPage() {
                   variant="ghost"
                   onClick={() => setDeleteId(r.id)}
                   aria-label={`Hapus pengingat ${r.medicationName}`}
-                  className="h-9 w-9 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  className="h-11 w-11 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive sm:h-9 sm:w-9"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

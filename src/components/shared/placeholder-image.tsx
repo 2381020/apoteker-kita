@@ -27,7 +27,7 @@ export function PlaceholderImage({
         style={{
           backgroundImage: fallback
             ? `url("${fallback}")`
-            : "url('/images/placeholder.png')",
+            : "url('/images/placeholder.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

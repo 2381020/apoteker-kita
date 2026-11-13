@@ -28,11 +28,11 @@ function GuideCard({
   onTagSelect: (tag: string) => void;
 }) {
   return (
-    <Card className="flex h-full flex-col p-5 transition-shadow duration-200 hover:shadow-soft">
+    <Card className="flex h-full flex-col p-4 transition-shadow duration-200 hover:shadow-soft sm:p-5">
       <PlaceholderImage
-          src={guide.imageUrl || "/images/placeholder.png"}
+          src={guide.imageUrl || "/images/placeholder.jpg"}
           alt={guide.title}
-          className="w-full h-48 object-cover rounded-md mb-4"
+          className="mb-4 h-40 w-full rounded-md object-cover sm:h-48"
         />
 
       <span className="w-fit rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-secondary">
@@ -87,9 +87,9 @@ function GuideDetails({
   return (
     <div className="space-y-5">
       <PlaceholderImage
-          src={guide.imageUrl || "/images/placeholder.png"}
+          src={guide.imageUrl || "/images/placeholder.jpg"}
           alt={guide.title}
-          className="w-full h-40 object-cover rounded-md mb-4"
+          className="mb-4 h-32 w-full rounded-md object-cover sm:h-40"
         />
 
       <span className="inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-secondary">
@@ -252,10 +252,11 @@ export function PanduanPage() {
             <Button
               variant="outline"
               onClick={resetFilters}
-              className="shrink-0"
+              aria-label="Reset filter"
+              className="shrink-0 px-3"
             >
-              <RotateCcw size={15} className="mr-1.5" />
-              Reset
+              <RotateCcw size={15} className="sm:mr-1.5" />
+              <span className="hidden sm:inline">Reset</span>
             </Button>
           )}
         </div>

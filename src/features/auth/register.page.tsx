@@ -51,23 +51,30 @@ export function RegisterPage() {
     setError("");
     setInfo("");
     setSubmitting(true);
-    const r = await regAuth({
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-    });
-    setSubmitting(false);
-    if (!r.ok) {
-      setError(r.error ?? "Pendaftaran gagal");
-      return;
+
+    try {
+      const r = await regAuth({
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (!r.ok) {
+        setError(r.error ?? "Pendaftaran gagal");
+        return;
+      }
+      if (r.needsEmailConfirmation) {
+        setInfo(
+          "Akun berhasil dibuat. Periksa email Anda untuk konfirmasi, lalu masuk.",
+        );
+        return;
+      }
+      navigate("/dashboard");
+    } catch {
+      setError("Terjadi kesalahan saat mendaftar. Silakan coba kembali.");
+    } finally {
+      setSubmitting(false);
     }
-    if (r.needsEmailConfirmation) {
-      setInfo(
-        "Akun berhasil dibuat. Periksa email Anda untuk konfirmasi, lalu masuk.",
-      );
-      return;
-    }
-    navigate("/dashboard");
   };
 
   return (
@@ -110,6 +117,7 @@ export function RegisterPage() {
             <Input
               id="fullName"
               placeholder="Budi Santoso"
+              autoComplete="name"
               className="pl-9"
               {...register("fullName")}
             />
@@ -128,6 +136,7 @@ export function RegisterPage() {
               id="email"
               type="email"
               placeholder="nama@email.com"
+              autoComplete="email"
               className="pl-9"
               {...register("email")}
             />
@@ -144,6 +153,7 @@ export function RegisterPage() {
               id="password"
               type="password"
               placeholder="Minimal 6 karakter"
+              autoComplete="new-password"
               className="pl-9"
               {...register("password")}
             />
@@ -162,6 +172,7 @@ export function RegisterPage() {
               id="confirmPassword"
               type="password"
               placeholder="Ulangi kata sandi"
+              autoComplete="new-password"
               className="pl-9"
               {...register("confirmPassword")}
             />

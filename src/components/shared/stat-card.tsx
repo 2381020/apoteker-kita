@@ -19,10 +19,10 @@ const accentMap = {
 
 export function StatCard({ title, value, icon: Icon, description, accent = "primary", className }: StatCardProps) {
   return (
-    <Card className={cn("p-5 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft", className)}>
-      <div className="flex items-center gap-4">
-        <div className={cn("flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl", accentMap[accent])}>
-          <Icon className="h-6 w-6" />
+    <Card className={cn("p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft sm:p-5", className)}>
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className={cn("flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12", accentMap[accent])}>
+          <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
         </div>
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">{title}</p>

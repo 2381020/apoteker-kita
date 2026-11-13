@@ -15,7 +15,6 @@ import {
   loadLocalMessages,
   saveLocalMessages,
 } from "@/lib/chat-storage";
-import { answerQuery } from "@/services/chat-engine";
 import {
   appendChatMessage,
   clearChatMessages,
@@ -125,6 +124,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       void (async () => {
         try {
+          const { answerQuery } = await import("@/services/chat-engine");
           const answer = await answerQuery(question, history);
 
           const botMessage: ChatMessage = {

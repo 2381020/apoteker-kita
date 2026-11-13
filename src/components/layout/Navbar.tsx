@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/lib/i18n";
 import {
   PUBLIC_NAV,
   isDashboardPath,
@@ -47,7 +48,7 @@ export function Logo({ className }: { className?: string }) {
         className="h-8 w-8 rounded-xl sm:h-9 sm:w-9"
       />
 
-      <span className="whitespace-nowrap text-base font-bold tracking-tight text-main-text sm:text-lg">
+      <span className="hidden whitespace-nowrap text-base font-bold tracking-tight text-main-text min-[360px]:inline sm:text-lg">
         Apoteker<span className="text-brand-text">Kita</span>
       </span>
     </Link>
@@ -64,6 +65,7 @@ interface NavbarProps {
 
 export function Navbar({ withTopBar = true }: NavbarProps = {}) {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const { navLabel } = useLanguage();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -196,8 +198,8 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
               type="button"
               onClick={() => setMobileOpen((v) => !v)}
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center",
-                "rounded-lg text-secondary-text",
+                "flex h-11 w-11 shrink-0 items-center justify-center",
+                "rounded-xl text-secondary-text",
                 "transition-colors hover:bg-accent hover:text-main-text",
                 "lg:hidden"
               )}
@@ -254,7 +256,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                       )}
                     />
 
-                    {item.label}
+                    {navLabel(item.href, item.label)}
                   </Link>
                 );
               })}
@@ -272,8 +274,9 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
                   aria-expanded={userMenuOpen}
+                  aria-label="Menu akun"
                   className={cn(
-                    "flex min-h-[40px] items-center gap-2",
+                    "flex min-h-11 items-center gap-2",
                     "rounded-full border border-border",
                     "bg-surface pl-1.5 pr-2 sm:pr-3",
                     "text-sm font-medium text-main-text",
@@ -294,7 +297,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                     {user?.fullName}
                   </span>
 
-                  <ChevronDown className="h-4 w-4 text-secondary-text" />
+                  <ChevronDown className="hidden h-4 w-4 text-secondary-text sm:block" />
                 </button>
 
                 {userMenuOpen && (
@@ -308,6 +311,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                       className={cn(
                         "animate-fade-in absolute right-0 z-50",
                         "mt-2 w-64 max-w-[calc(100vw-1.5rem)]",
+                        "max-h-[calc(100dvh-var(--navbar-h)-2rem)] overflow-y-auto",
                         "rounded-xl border border-border",
                         "bg-surface p-1.5 shadow-popover"
                       )}
@@ -411,7 +415,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                   asChild
                   variant="outline"
                   size="sm"
-                  className="px-2.5 text-xs sm:px-3 sm:text-sm"
+                  className="hidden min-h-11 px-2.5 text-xs sm:inline-flex sm:px-3 sm:text-sm"
                 >
                   <Link to="/login">Masuk</Link>
                 </Button>
@@ -419,7 +423,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                 <Button
                   asChild
                   size="sm"
-                  className="bg-brand px-2.5 text-xs text-brand-foreground hover:bg-brand-hover sm:px-3 sm:text-sm"
+                  className="hidden min-h-11 bg-brand px-2.5 text-xs text-brand-foreground hover:bg-brand-hover sm:inline-flex sm:px-3 sm:text-sm"
                 >
                   <Link to="/register">Daftar</Link>
                 </Button>

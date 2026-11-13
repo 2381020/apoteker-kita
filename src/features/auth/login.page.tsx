@@ -129,7 +129,7 @@ export function LoginPage() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="Masukkan kata sandi"
               autoComplete="current-password"
               className="pl-9"
               {...register("password")}
@@ -178,7 +178,7 @@ export function LoginPage() {
               key={account.email}
               type="button"
               onClick={() => fillDemo(account.email, account.password)}
-              className="flex w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-2.5 text-left text-sm transition-colors hover:border-primary/40 hover:bg-primary-soft/40"
+              className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-3 text-left text-sm transition-colors hover:border-primary/40 hover:bg-primary-soft/40"
             >
               <span className="shrink-0 font-medium text-main-text">
                 {account.role === "admin" ? "Admin" : "Pasien"}

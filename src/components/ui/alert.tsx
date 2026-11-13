@@ -23,7 +23,11 @@ const variantConfig: Record<AlertVariant, { classes: string; Icon: React.Element
 export function Alert({ variant = "default", title, description, className, children }: AlertProps) {
   const { classes, Icon } = variantConfig[variant];
   return (
-    <div className={cn("flex items-start gap-3 rounded-xl border p-4", classes, className)}>
+    <div
+      role={variant === "destructive" ? "alert" : "status"}
+      aria-live={variant === "destructive" ? "assertive" : "polite"}
+      className={cn("flex items-start gap-3 rounded-xl border p-4", classes, className)}
+    >
       {children ?? <Icon className="mt-0.5 h-5 w-5 flex-shrink-0" />}
       {(title || description) && (
         <div className="flex flex-col">

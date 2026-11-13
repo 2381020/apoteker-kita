@@ -906,14 +906,14 @@ export function ManageGuidesPage() {
       {/* Add/Edit Dialog */}
       {isDialogOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-3 backdrop-blur-sm sm:p-6"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) {
               closeDialog();
             }
           }}
         >
-          <div className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:max-h-[94vh]">
+          <div className="flex max-h-[calc(100dvh-0.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:max-h-[94vh] sm:rounded-2xl">
             {/* Dialog header */}
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-7">
               <div>
@@ -929,7 +929,7 @@ export function ManageGuidesPage() {
                 type="button"
                 onClick={closeDialog}
                 disabled={saving}
-                className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
               >
                 <X size={21} />
               </button>
