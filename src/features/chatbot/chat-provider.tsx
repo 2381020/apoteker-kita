@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/lib/i18n";
 import { createId, type ChatMessage } from "@/lib/chatbot";
 import {
   clearLocalMessages,
@@ -42,6 +43,7 @@ const FALLBACK_ERROR =
   "Maaf, terjadi kendala saat memproses pertanyaan. Silakan coba lagi.";
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  const { tr } = useLanguage();
   const { user } = useAuth();
   const userId = user?.id ?? null;
 
@@ -142,11 +144,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           persist(botMessage);
         } catch (answerError) {
           console.error("Gagal memproses pertanyaan chat:", answerError);
-          setError(FALLBACK_ERROR);
+          const fallbackError = tr(FALLBACK_ERROR);
+          setError(fallbackError);
 
           const botMessage: ChatMessage = {
             id: createId(),
-            text: FALLBACK_ERROR,
+            text: fallbackError,
             isUser: false,
             createdAt: new Date().toISOString(),
             source: "fallback",
@@ -160,7 +163,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }
       })();
     },
-    [input, isLoaded, isTyping, messages, persist],
+    [input, isLoaded, isTyping, messages, persist, tr],
   );
 
   const clear = useCallback(async () => {

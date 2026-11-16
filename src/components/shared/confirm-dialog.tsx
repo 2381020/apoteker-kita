@@ -1,5 +1,6 @@
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/i18n";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -17,11 +18,17 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
-  confirmLabel = "Hapus",
-  cancelLabel = "Batal",
+  confirmLabel,
+  cancelLabel,
   destructive = true,
   onConfirm,
 }: ConfirmDialogProps) {
+  const { tr } = useLanguage();
+  const defaultConfirmLabel = tr("Hapus");
+  const defaultCancelLabel = tr("Batal");
+  const finalConfirmLabel = confirmLabel ?? defaultConfirmLabel;
+  const finalCancelLabel = cancelLabel ?? defaultCancelLabel;
+
   return (
     <Dialog
       open={open}
@@ -31,7 +38,7 @@ export function ConfirmDialog({
     >
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={() => onOpenChange(false)}>
-          {cancelLabel}
+          {finalCancelLabel}
         </Button>
         <Button
           variant={destructive ? "destructive" : "default"}
@@ -40,7 +47,7 @@ export function ConfirmDialog({
             onOpenChange(false);
           }}
         >
-          {confirmLabel}
+          {finalConfirmLabel}
         </Button>
       </div>
     </Dialog>

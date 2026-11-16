@@ -18,10 +18,13 @@ import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
+import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 9;
 
 function PharmacyCard({ pharmacy }: { pharmacy: Pharmacy }) {
+  const { t, tr } = useLanguage();
+
   const handleOpenMaps = () => {
     const destination = encodeURIComponent(
       `${pharmacy.address}, ${pharmacy.city}`,
@@ -67,7 +70,9 @@ function PharmacyCard({ pharmacy }: { pharmacy: Pharmacy }) {
               pharmacy.isOpen ? "bg-success" : "bg-secondary-text"
             }`}
           />
-          {pharmacy.isOpen ? "Buka" : "Tutup"}
+          {pharmacy.isOpen
+            ? t("pharmacy_status_open")
+            : t("pharmacy_status_closed")}
         </Badge>
       </div>
 
@@ -87,7 +92,9 @@ function PharmacyCard({ pharmacy }: { pharmacy: Pharmacy }) {
         <div className="flex items-center gap-2.5 text-sm text-secondary-text">
           <Clock size={16} className="shrink-0" />
           <span>
-            {pharmacy.isOpen ? "Sedang beroperasi" : "Tidak beroperasi"}
+            {pharmacy.isOpen
+              ? t("pharmacy_operating")
+              : t("pharmacy_not_operating")}
           </span>
         </div>
       </div>
@@ -113,13 +120,14 @@ function PharmacyCard({ pharmacy }: { pharmacy: Pharmacy }) {
         onClick={handleOpenMaps}
       >
         <Navigation size={16} className="mr-2" />
-        Lihat rute
+        {tr("Lihat rute")}
       </Button>
     </Card>
   );
 }
 
 export function ApotekPage() {
+  const { tr } = useLanguage();
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -181,12 +189,12 @@ export function ApotekPage() {
     <div className="animate-fade-in space-y-6">
       <section
         className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-center"
-        aria-label="Pencarian apotek"
+        aria-label={tr("Pencarian apotek")}
       >
         <SearchBar
           value={search}
           onChange={setSearch}
-          placeholder="Cari nama apotek, kota, atau alamat..."
+          placeholder={tr("Cari nama apotek, kota, atau alamat...")}
           className="flex-1"
         />
 
@@ -194,22 +202,22 @@ export function ApotekPage() {
           <span className="font-semibold text-main-text">
             {filteredPharmacies.length}
           </span>{" "}
-          apotek ditemukan
+          {tr("apotek ditemukan")}
         </p>
       </section>
 
       {filteredPharmacies.length === 0 ? (
         <EmptyState
-          title="Apotek tidak ditemukan"
-          description="Coba gunakan kata kunci lain atau periksa kembali ejaan pencarian."
-          actionLabel="Hapus pencarian"
+          title={tr("Apotek tidak ditemukan")}
+          description={tr("Coba gunakan kata kunci lain atau periksa kembali ejaan pencarian.")}
+          actionLabel={tr("Hapus pencarian")}
           onAction={() => setSearch("")}
         />
       ) : (
         <>
           <section
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            aria-label="Daftar apotek"
+            aria-label={tr("Daftar apotek")}
           >
             {pageItems.map((pharmacy) => (
               <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />

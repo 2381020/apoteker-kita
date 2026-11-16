@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface PaginationProps {
   page: number;
@@ -47,6 +48,8 @@ export function Pagination({
   disabled = false,
   className,
 }: PaginationProps) {
+  const { tr } = useLanguage();
+
   if (totalItems === 0) return null;
 
   const safeTotalPages = Math.max(1, totalPages);
@@ -61,7 +64,7 @@ export function Pagination({
 
   return (
     <nav
-      aria-label="Navigasi halaman"
+      aria-label={tr("Navigasi halaman")}
       className={cn("w-full py-4 px-2 sm:px-0", className)}
     >
       <div className="flex items-center justify-between gap-2 sm:justify-center sm:gap-2">
@@ -71,17 +74,23 @@ export function Pagination({
           variant="outline"
           onClick={() => onPageChange(safePage - 1)}
           disabled={disabled || safePage <= 1}
-          aria-label="Halaman sebelumnya"
+          aria-label={tr("Halaman sebelumnya")}
           className={cn(buttonClass, "gap-1 px-3 sm:gap-1 sm:px-3")}
         >
           <ChevronLeft className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Sebelumnya</span>
+          <span className="hidden sm:inline">{tr("Sebelumnya")}</span>
         </Button>
 
         {/* Ringkasan mobile */}
         <p className="min-w-0 flex-1 truncate text-center text-xs text-secondary-text sm:hidden">
-          Hal. {safePage}/{safeTotalPages} · {rangeStart}–{rangeEnd} dari{" "}
-          {totalItems} {itemLabel}
+          {tr("Hal. {page}/{totalPages} · {start}–{end} dari {items} {label}", {
+            page: safePage,
+            totalPages: safeTotalPages,
+            start: rangeStart,
+            end: rangeEnd,
+            items: totalItems,
+            label: tr(itemLabel),
+          })}
         </p>
 
         {/* Page Numbers (desktop) */}
@@ -102,7 +111,7 @@ export function Pagination({
                 variant="outline"
                 onClick={() => onPageChange(item)}
                 disabled={disabled}
-                aria-label={`Halaman ${item}`}
+                aria-label={tr("Halaman {page}", { page: item })}
                 aria-current={item === safePage ? "page" : undefined}
                 className={cn(
                   buttonClass,
@@ -122,10 +131,10 @@ export function Pagination({
           variant="outline"
           onClick={() => onPageChange(safePage + 1)}
           disabled={disabled || safePage >= safeTotalPages}
-          aria-label="Halaman berikutnya"
+          aria-label={tr("Halaman berikutnya")}
           className={cn(buttonClass, "gap-1 px-3 sm:gap-1 sm:px-3")}
         >
-          <span className="hidden sm:inline">Berikutnya</span>
+          <span className="hidden sm:inline">{tr("Berikutnya")}</span>
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>
       </div>

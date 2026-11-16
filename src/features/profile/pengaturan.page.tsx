@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/shared/page-header";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/i18n";
 
 type FormState = {
   fullName: string;
@@ -34,6 +35,7 @@ const defaultForm: FormState = {
 export function PengaturanPage() {
   const { user, logout, refresh } = useAuth();
   const { add } = useToast();
+  const { tr } = useLanguage();
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(defaultForm);
   const [loading, setLoading] = useState(true);
@@ -113,16 +115,19 @@ export function PengaturanPage() {
       await refresh();
 
       add({
-        title: "Perubahan disimpan",
+        title: tr("Perubahan disimpan"),
         description: emailChanged
-          ? "Profil diperbarui. Jika konfirmasi email aktif, periksa kotak masuk untuk memverifikasi email baru."
-          : "Profil Anda berhasil diperbarui.",
+          ? tr(
+              "Profil diperbarui. Jika konfirmasi email aktif, periksa kotak masuk untuk memverifikasi email baru.",
+            )
+          : tr("Profil Anda berhasil diperbarui."),
         variant: "success",
       });
     } catch (error) {
       add({
-        title: "Gagal menyimpan perubahan",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan",
+        title: tr("Gagal menyimpan perubahan"),
+        description:
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     } finally {
@@ -137,7 +142,9 @@ export function PengaturanPage() {
     try {
       await updateProfile(user.id, { notificationPreferences: next });
       add({
-        title: checked ? "Notifikasi pengingat aktif" : "Notifikasi pengingat dimatikan",
+        title: checked
+          ? tr("Notifikasi pengingat aktif")
+          : tr("Notifikasi pengingat dimatikan"),
         variant: "success",
       });
     } catch (error) {
@@ -146,8 +153,9 @@ export function PengaturanPage() {
         notificationPreferences: form.notificationPreferences,
       }));
       add({
-        title: "Gagal mengubah notifikasi",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan",
+        title: tr("Gagal mengubah notifikasi"),
+        description:
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     }
@@ -156,11 +164,11 @@ export function PengaturanPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Pengaturan"
+        title={tr("Pengaturan")}
         description={
           isAdmin
-            ? "Kelola akun administrator dan akses pengelolaan data."
-            : "Kelola akun, data kesehatan, dan preferensi notifikasi Anda."
+            ? tr("Kelola akun administrator dan akses pengelolaan data.")
+            : tr("Kelola akun, data kesehatan, dan preferensi notifikasi Anda.")
         }
         icon={Settings}
       />
@@ -168,21 +176,21 @@ export function PengaturanPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="p-5 sm:p-6">
           <h2 className="text-base font-semibold text-main-text">
-            {isAdmin ? "Akun Administrator" : "Profil Pasien"}
+            {isAdmin ? tr("Akun Administrator") : tr("Profil Pasien")}
           </h2>
           <p className="mt-1 text-sm text-secondary-text">
             {isAdmin
-              ? "Perbarui informasi dasar akun administrator."
-              : "Perbarui informasi dasar dan data kesehatan Anda."}
+              ? tr("Perbarui informasi dasar akun administrator.")
+              : tr("Perbarui informasi dasar dan data kesehatan Anda.")}
           </p>
           <div className="mt-5 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nama Lengkap</Label>
+              <Label htmlFor="fullName">{tr("Nama Lengkap")}</Label>
               <Input
                 id="fullName"
                 value={form.fullName}
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                placeholder="Nama lengkap Anda"
+                placeholder={tr("Nama lengkap Anda")}
               />
             </div>
             <div className="space-y-2">
@@ -196,7 +204,7 @@ export function PengaturanPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Nomor Telepon</Label>
+              <Label htmlFor="phone">{tr("Nomor Telepon")}</Label>
               <Input
                 id="phone"
                 value={form.phone}
@@ -207,7 +215,7 @@ export function PengaturanPage() {
             {!isAdmin && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="dateOfBirth">Tanggal Lahir</Label>
+                  <Label htmlFor="dateOfBirth">{tr("Tanggal Lahir")}</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
@@ -216,7 +224,7 @@ export function PengaturanPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="gender">Jenis Kelamin</Label>
+                  <Label htmlFor="gender">{tr("Jenis Kelamin")}</Label>
                   <select
                     id="gender"
                     value={form.gender}
@@ -228,27 +236,28 @@ export function PengaturanPage() {
                     }
                     className="h-10 w-full rounded-lg border border-input bg-surface px-3 text-sm text-main-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="">Pilih jenis kelamin</option>
-                    <option value="laki-laki">Laki-laki</option>
-                    <option value="perempuan">Perempuan</option>
+                    <option value="">{tr("Pilih jenis kelamin")}</option>
+                    <option value="laki-laki">{tr("Laki-laki")}</option>
+                    <option value="perempuan">{tr("Perempuan")}</option>
                   </select>
                 </div>
               </>
             )}
             <Button onClick={simpan} className="w-full" disabled={saving}>
-              <Save className="mr-1.5 h-4 w-4" /> {saving ? "Menyimpan..." : "Simpan Perubahan"}
+              <Save className="mr-1.5 h-4 w-4" />{" "}
+              {saving ? tr("Menyimpan...") : tr("Simpan Perubahan")}
             </Button>
           </div>
         </Card>
 
         <Card className="flex flex-col p-5 sm:p-6">
           <h2 className="text-base font-semibold text-main-text">
-            {isAdmin ? "Administrasi" : "Preferensi"}
+            {isAdmin ? tr("Administrasi") : tr("Preferensi")}
           </h2>
           <p className="mt-1 text-sm text-secondary-text">
             {isAdmin
-              ? "Akses cepat ke fitur pengelolaan data."
-              : "Atur bagaimana Anda ingin menerima notifikasi."}
+              ? tr("Akses cepat ke fitur pengelolaan data.")
+              : tr("Atur bagaimana Anda ingin menerima notifikasi.")}
           </p>
 
           {!isAdmin && (
@@ -258,8 +267,8 @@ export function PengaturanPage() {
                   <Bell className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-main-text">Notifikasi Pengingat</p>
-                  <p className="text-xs text-secondary-text">Terima pengingat jadwal minum obat</p>
+                  <p className="truncate text-sm font-medium text-main-text">{tr("Notifikasi Pengingat")}</p>
+                  <p className="text-xs text-secondary-text">{tr("Terima pengingat jadwal minum obat")}</p>
                 </div>
               </div>
               <label className="relative inline-flex shrink-0 cursor-pointer items-center">
@@ -268,7 +277,7 @@ export function PengaturanPage() {
                   checked={form.notificationPreferences.reminders}
                   onChange={(e) => toggleNotification(e.target.checked)}
                   className="peer sr-only"
-                  aria-label="Notifikasi pengingat"
+                  aria-label={tr("Notifikasi pengingat")}
                 />
                 <span className="block h-6 w-11 rounded-full bg-muted transition-colors peer-checked:bg-primary" />
                 <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
@@ -278,13 +287,13 @@ export function PengaturanPage() {
 
           <div className="mt-6 flex-1 space-y-2 border-t border-border pt-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
-              Tautan cepat
+              {tr("Tautan cepat")}
             </p>
             <button
               onClick={() => navigate("/profil")}
               className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
             >
-              <UserRound className="h-4 w-4" /> Lihat profil
+              <UserRound className="h-4 w-4" /> {tr("Lihat profil")}
             </button>
             {isAdmin ? (
               <>
@@ -292,19 +301,19 @@ export function PengaturanPage() {
                   onClick={() => navigate("/admin")}
                   className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
                 >
-                  <ShieldCheck className="h-4 w-4" /> Panel admin
+                  <ShieldCheck className="h-4 w-4" /> {tr("Panel admin")}
                 </button>
                 <button
                   onClick={() => navigate("/admin/pengguna")}
                   className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
                 >
-                  <Users className="h-4 w-4" /> Kelola pengguna
+                  <Users className="h-4 w-4" /> {tr("Kelola pengguna")}
                 </button>
                 <button
                   onClick={() => navigate("/admin/obat")}
                   className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
                 >
-                  <Pill className="h-4 w-4" /> Kelola obat
+                  <Pill className="h-4 w-4" /> {tr("Kelola obat")}
                 </button>
               </>
             ) : (
@@ -312,7 +321,7 @@ export function PengaturanPage() {
                 onClick={() => navigate("/tanya")}
                 className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
               >
-                <MessageCircle className="h-4 w-4" /> Tanya apoteker
+                <MessageCircle className="h-4 w-4" /> {tr("Tanya apoteker")}
               </button>
             )}
             <button
@@ -322,7 +331,7 @@ export function PengaturanPage() {
               }}
               className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
             >
-              <LogOut className="h-4 w-4" /> Keluar dari akun
+              <LogOut className="h-4 w-4" /> {tr("Keluar dari akun")}
             </button>
           </div>
         </Card>

@@ -1,6 +1,7 @@
 ﻿import * as React from "react";
 import { X, CheckCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 type ToastVariant = "default" | "destructive" | "success" | "warning";
 
@@ -43,6 +44,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 }
 
 function ToastItem({ toast, onRemove }: { toast: ToastItem; onRemove: (id: string) => void }) {
+  const { tr } = useLanguage();
   const icons = { default: <AlertTriangle className="h-4 w-4" />, destructive: <AlertTriangle className="h-4 w-4" />, success: <CheckCircle className="h-4 w-4" />, warning: <AlertTriangle className="h-4 w-4" /> };
   const color = { default: "bg-surface text-main-text border-border", destructive: "bg-destructive text-destructive-foreground border-destructive", success: "bg-success text-white border-success", warning: "bg-warning text-white border-warning" };
   return (
@@ -52,7 +54,7 @@ function ToastItem({ toast, onRemove }: { toast: ToastItem; onRemove: (id: strin
         <p className="break-words text-sm font-medium">{toast.title}</p>
         {toast.description && <p className="mt-0.5 break-words text-xs opacity-90">{toast.description}</p>}
       </div>
-      <button onClick={() => onRemove(toast.id)} className="shrink-0 opacity-50 hover:opacity-100" aria-label="Tutup notifikasi">
+      <button onClick={() => onRemove(toast.id)} className="shrink-0 opacity-50 hover:opacity-100" aria-label={tr("Tutup notifikasi")}>
         <X className="h-4 w-4" />
       </button>
     </div>

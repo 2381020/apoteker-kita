@@ -1,14 +1,15 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 const links = [
-  { href: "/obat", label: "Informasi Obat" },
-  { href: "/interaksi", label: "Cek Interaksi" },
-  { href: "/dosis", label: "Kalkulator Dosis" },
-  { href: "/panduan", label: "Panduan" },
-  { href: "/apotek", label: "Cari Apotek" },
-];
+  { href: "/obat", labelKey: "footer_link_medications" },
+  { href: "/interaksi", labelKey: "footer_link_interactions" },
+  { href: "/dosis", labelKey: "footer_link_dosage" },
+  { href: "/panduan", labelKey: "footer_link_guides" },
+  { href: "/apotek", labelKey: "footer_link_pharmacy" },
+] as const;
 
 const SOCIAL_ICONS: { label: string; href: string; path: string }[] = [
   {
@@ -38,22 +39,25 @@ const SOCIAL_ICONS: { label: string; href: string; path: string }[] = [
   },
 ];
 
-const CONTACT: { icon: typeof Mail; label: string; href?: string }[] = [
-  {
-    icon: Mail,
-    label: "halo@apotekerkita.com",
-    href: "mailto:halo@apotekerkita.com",
-  },
-  {
-    icon: Phone,
-    label: "+62 812-3456-7890",
-    href: "https://wa.me/6281234567890",
-  },
-  { icon: MapPin, label: "Jl. Kesehatan No. 10, Jakarta Selatan 12345" },
-  { icon: Clock, label: "Senin–Jumat, 08.00–17.00 WIB" },
-];
-
 export function Footer() {
+  const { t } = useLanguage();
+  const year = new Date().getFullYear();
+
+  const contact: { icon: typeof Mail; label: string; href?: string }[] = [
+    {
+      icon: Mail,
+      label: "halo@apotekerkita.com",
+      href: "mailto:halo@apotekerkita.com",
+    },
+    {
+      icon: Phone,
+      label: "+62 812-3456-7890",
+      href: "https://wa.me/6281234567890",
+    },
+    { icon: MapPin, label: "Jl. Kesehatan No. 10, Jakarta Selatan 12345" },
+    { icon: Clock, label: t("footer_hours") },
+  ];
+
   return (
     <footer className="border-t border-white/10 bg-[#164E49] bg-[url('/images/footer-bg.jpg')] bg-no-repeat bg-cover bg-center">
       <div className="mx-auto max-w-[var(--layout-max)] px-4 py-10 pb-[calc(2.5rem+var(--safe-bottom))] sm:px-6 sm:py-12">
@@ -70,15 +74,13 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-5 text-sm leading-relaxed text-white/90">
-              Platform informasi obat digital Indonesia untuk memahami obat,
-              memeriksa interaksi, menghitung dosis, dan mengelola jadwal minum
-              obat.
+              {t("footer_tagline")}
             </p>
           </div>
 
           <div className="md:col-span-4">
             <h3 className="mb-4 text-base font-semibold uppercase tracking-wider text-white/90 sm:mb-5 sm:text-xl">
-              Fitur
+              {t("footer_features_heading")}
             </h3>
             <ul className="space-y-3">
               {links.map((l) => (
@@ -87,7 +89,7 @@ export function Footer() {
                     to={l.href}
                     className="text-sm text-white/90 transition-colors hover:text-[#FFD54F]"
                   >
-                    {l.label}
+                    {t(l.labelKey)}
                   </Link>
                 </li>
               ))}
@@ -96,7 +98,7 @@ export function Footer() {
 
           <div className="md:col-span-4">
             <h3 className="mb-4 text-base font-semibold uppercase tracking-wider text-white/90 sm:mb-5 sm:text-xl">
-              Ikuti Kami
+              {t("footer_follow_heading")}
             </h3>
             <div className="flex flex-wrap items-center gap-4 sm:gap-6">
               {SOCIAL_ICONS.map((s) => (
@@ -122,10 +124,10 @@ export function Footer() {
 
             <div className="mt-6 sm:mt-8">
               <h4 className="mb-3 text-base font-semibold uppercase tracking-wider text-white/90 sm:mb-4 sm:text-xl">
-                Kontak
+                {t("footer_contact_heading")}
               </h4>
               <ul className="space-y-3 text-sm text-white/90">
-                {CONTACT.map((c) => {
+                {contact.map((c) => {
                   const Icon = c.icon;
                   const body = (
                     <>
@@ -164,7 +166,7 @@ export function Footer() {
 
         <div className="mt-8 border-t border-white/10 pt-6 sm:mt-12 sm:pt-8">
           <p className="text-xs text-white/90">
-            &copy; {new Date().getFullYear()} ApotekerKita
+            {t("footer_copyright", { tahun: year, year })}
           </p>
         </div>
       </div>

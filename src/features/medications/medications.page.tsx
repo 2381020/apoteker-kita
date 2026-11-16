@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
+import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 9;
 
@@ -31,6 +32,8 @@ function MedicationCard({
   medication: Medication;
   onSelect: (medication: Medication) => void;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <Card className="flex h-full flex-col p-4 transition-shadow duration-200 hover:shadow-soft sm:p-5">
       <div className="flex items-start justify-between gap-3">
@@ -53,7 +56,7 @@ function MedicationCard({
           variant={medication.isPrescription ? "danger" : "success"}
           className="shrink-0"
         >
-          {medication.isPrescription ? "Resep" : "Bebas"}
+          {medication.isPrescription ? tr("Resep") : tr("Bebas")}
         </Badge>
       </div>
 
@@ -63,21 +66,21 @@ function MedicationCard({
 
       <dl className="mt-4 space-y-2 border-t border-border pt-3 text-xs">
         <div className="flex items-start justify-between gap-3">
-          <dt className="text-secondary-text">Generik</dt>
+          <dt className="text-secondary-text">{tr("Generik")}</dt>
           <dd className="text-right font-medium text-main-text">
             {medication.genericName}
           </dd>
         </div>
 
         <div className="flex items-start justify-between gap-3">
-          <dt className="text-secondary-text">Bentuk</dt>
+          <dt className="text-secondary-text">{tr("Bentuk")}</dt>
           <dd className="text-right font-medium text-main-text">
             {medication.dosageForm} ({medication.strength})
           </dd>
         </div>
 
         <div className="flex items-start justify-between gap-3">
-          <dt className="text-secondary-text">Kategori</dt>
+          <dt className="text-secondary-text">{tr("Kategori")}</dt>
           <dd className="text-right font-medium text-main-text">
             {medication.category}
           </dd>
@@ -89,7 +92,7 @@ function MedicationCard({
         className="mt-4 w-full"
         onClick={() => onSelect(medication)}
       >
-        Lihat detail
+        {tr("Lihat detail")}
       </Button>
     </Card>
   );
@@ -103,13 +106,15 @@ function MedicationDetails({
   medication: Medication;
   onClose: () => void;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant={medication.isPrescription ? "danger" : "success"}>
           {medication.isPrescription
-            ? "Obat keras — membutuhkan resep"
-            : "Obat bebas"}
+            ? tr("Obat keras — membutuhkan resep")
+            : tr("Obat bebas")}
         </Badge>
 
         <Badge variant="secondary">{medication.category}</Badge>
@@ -121,7 +126,7 @@ function MedicationDetails({
         <section>
           <h4 className="flex items-center gap-2 font-semibold text-main-text">
             <Pill size={17} className="text-primary" />
-            Deskripsi
+            {tr("Deskripsi")}
           </h4>
 
           <p className="mt-2 leading-relaxed text-secondary-text">
@@ -131,33 +136,33 @@ function MedicationDetails({
 
         <section>
           <h4 className="font-semibold text-main-text">
-            Informasi dasar
+            {tr("Informasi dasar")}
           </h4>
 
           <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-lg bg-muted p-3">
-              <dt className="text-xs text-secondary-text">Nama generik</dt>
+              <dt className="text-xs text-secondary-text">{tr("Nama generik")}</dt>
               <dd className="mt-1 font-medium text-main-text">
                 {medication.genericName}
               </dd>
             </div>
 
             <div className="rounded-lg bg-muted p-3">
-              <dt className="text-xs text-secondary-text">Merek</dt>
+              <dt className="text-xs text-secondary-text">{tr("Merek")}</dt>
               <dd className="mt-1 font-medium text-main-text">
                 {medication.brand}
               </dd>
             </div>
 
             <div className="rounded-lg bg-muted p-3">
-              <dt className="text-xs text-secondary-text">Kekuatan</dt>
+              <dt className="text-xs text-secondary-text">{tr("Kekuatan")}</dt>
               <dd className="mt-1 font-medium text-main-text">
                 {medication.strength}
               </dd>
             </div>
 
             <div className="rounded-lg bg-muted p-3">
-              <dt className="text-xs text-secondary-text">Penyimpanan</dt>
+              <dt className="text-xs text-secondary-text">{tr("Penyimpanan")}</dt>
               <dd className="mt-1 font-medium text-main-text">
                 {medication.storage}
               </dd>
@@ -167,7 +172,7 @@ function MedicationDetails({
 
         {medication.uses.length > 0 && (
           <section>
-            <h4 className="font-semibold text-main-text">Kegunaan</h4>
+            <h4 className="font-semibold text-main-text">{tr("Kegunaan")}</h4>
 
             <ul className="mt-2 list-inside list-disc space-y-1.5 text-secondary-text">
               {medication.uses.map((use) => (
@@ -181,7 +186,7 @@ function MedicationDetails({
           <section className="rounded-xl border border-warning/30 bg-warning/10 p-4">
             <h4 className="flex items-center gap-2 font-semibold text-[#92400E]">
               <AlertTriangle size={17} />
-              Efek samping
+              {tr("Efek samping")}
             </h4>
 
             <ul className="mt-2 list-inside list-disc space-y-1.5 text-[#92400E]">
@@ -195,7 +200,7 @@ function MedicationDetails({
         {medication.contraindications.length > 0 && (
           <section className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
             <h4 className="font-semibold text-destructive">
-              Kontraindikasi
+              {tr("Kontraindikasi")}
             </h4>
 
             <ul className="mt-2 list-inside list-disc space-y-1.5 text-destructive">
@@ -207,9 +212,9 @@ function MedicationDetails({
         )}
 
         <p className="rounded-lg bg-muted p-3 text-xs leading-relaxed text-secondary-text">
-          Informasi ini bersifat edukatif dan bukan pengganti konsultasi
-          dengan dokter atau apoteker. Ikuti petunjuk penggunaan pada
-          kemasan atau resep yang diberikan tenaga kesehatan.
+          {tr(
+            "Informasi ini bersifat edukatif dan bukan pengganti konsultasi dengan dokter atau apoteker. Ikuti petunjuk penggunaan pada kemasan atau resep yang diberikan tenaga kesehatan."
+          )}
         </p>
       </div>
 
@@ -219,7 +224,7 @@ function MedicationDetails({
         onClick={onClose}
       >
         <X size={16} className="mr-2" />
-        Tutup
+        {tr("Tutup")}
       </Button>
     </div>
   );
@@ -227,6 +232,7 @@ function MedicationDetails({
 
 // Main page
 export function ObatPage() {
+  const { tr } = useLanguage();
   const [searchParams] = useSearchParams();
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
@@ -317,12 +323,12 @@ export function ObatPage() {
     <div className="animate-fade-in space-y-6">
       <section
         className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-center"
-        aria-label="Pencarian dan filter obat"
+        aria-label={tr("Pencarian dan filter obat")}
       >
         <SearchBar
           value={search}
           onChange={setSearch}
-          placeholder="Cari nama obat, generik, atau merek..."
+          placeholder={tr("Cari nama obat, generik, atau merek...")}
           className="flex-1"
         />
 
@@ -331,9 +337,9 @@ export function ObatPage() {
             value={category}
             onChange={(event) => setCategory(event.target.value)}
             className="h-10 min-w-0 flex-1 rounded-lg border border-input bg-surface px-3 text-sm text-main-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-48 sm:flex-none"
-            aria-label="Filter kategori obat"
+            aria-label={tr("Filter kategori obat")}
           >
-            <option value="">Semua Kategori</option>
+            <option value="">{tr("Semua Kategori")}</option>
 
             {categories.map((item) => (
               <option key={item} value={item}>
@@ -346,11 +352,11 @@ export function ObatPage() {
             <Button
               variant="outline"
               onClick={resetFilters}
-              aria-label="Reset filter"
+              aria-label={tr("Reset filter")}
               className="shrink-0 px-3"
             >
               <RotateCcw size={15} className="sm:mr-1.5" />
-              <span className="hidden sm:inline">Reset</span>
+              <span className="hidden sm:inline">{tr("Reset")}</span>
             </Button>
           )}
         </div>
@@ -358,26 +364,26 @@ export function ObatPage() {
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-secondary-text">
-          Menampilkan{" "}
+          {tr("Menampilkan")}{" "}
           <span className="font-semibold text-main-text">
             {filteredMedications.length}
           </span>{" "}
-          dari {medications.length} obat
+          {tr("dari")} {medications.length} {tr("obat")}
         </p>
       </div>
 
       {filteredMedications.length === 0 ? (
         <EmptyState
-          title="Obat tidak ditemukan"
-          description="Coba gunakan kata kunci lain atau pilih kategori yang berbeda."
-          actionLabel="Reset filter"
+          title={tr("Obat tidak ditemukan")}
+          description={tr("Coba gunakan kata kunci lain atau pilih kategori yang berbeda.")}
+          actionLabel={tr("Reset filter")}
           onAction={resetFilters}
         />
       ) : (
         <>
           <section
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            aria-label="Daftar obat"
+            aria-label={tr("Daftar obat")}
           >
             {pageItems.map((medication) => (
               <MedicationCard

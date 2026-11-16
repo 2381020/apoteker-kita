@@ -33,6 +33,7 @@ import {
 } from "@/services/guide-image.service";
 
 import { Pagination } from "@/components/shared/pagination";
+import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 10;
 
@@ -59,6 +60,7 @@ const ALLOWED_IMAGE_TYPES = [
 ];
 
 export function ManageGuidesPage() {
+  const { tr, t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Data
@@ -129,7 +131,7 @@ export function ManageGuidesPage() {
       setError(
         err instanceof Error
           ? err.message
-          : "Gagal memuat data panduan."
+          : tr("Gagal memuat data panduan.")
       );
     } finally {
       setLoading(false);
@@ -310,13 +312,13 @@ export function ManageGuidesPage() {
     if (!file) return;
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setFormError("Format gambar harus JPG, PNG, atau WEBP.");
+      setFormError(tr("Format gambar harus JPG, PNG, atau WEBP."));
       event.target.value = "";
       return;
     }
 
     if (file.size > MAX_IMAGE_SIZE) {
-      setFormError("Ukuran gambar maksimal 5 MB.");
+      setFormError(tr("Ukuran gambar maksimal 5 MB."));
       event.target.value = "";
       return;
     }
@@ -356,22 +358,22 @@ export function ManageGuidesPage() {
 
   const validateForm = (): boolean => {
     if (!formData.title.trim()) {
-      setFormError("Judul panduan wajib diisi.");
+      setFormError(tr("Judul panduan wajib diisi."));
       return false;
     }
 
     if (!formData.category.trim()) {
-      setFormError("Kategori panduan wajib diisi.");
+      setFormError(tr("Kategori panduan wajib diisi."));
       return false;
     }
 
     if (!formData.summary.trim()) {
-      setFormError("Ringkasan panduan wajib diisi.");
+      setFormError(tr("Ringkasan panduan wajib diisi."));
       return false;
     }
 
     if (!formData.content.trim()) {
-      setFormError("Isi panduan wajib diisi.");
+      setFormError(tr("Isi panduan wajib diisi."));
       return false;
     }
 
@@ -433,11 +435,11 @@ export function ManageGuidesPage() {
           }
         }
 
-        showNotification("Panduan berhasil diperbarui.");
+        showNotification(tr("Panduan berhasil diperbarui."));
       } else {
         await createGuide(payload);
 
-        showNotification("Panduan berhasil ditambahkan.");
+        showNotification(tr("Panduan berhasil ditambahkan."));
       }
 
       clearImagePreview();
@@ -470,7 +472,7 @@ export function ManageGuidesPage() {
       setFormError(
         err instanceof Error
           ? err.message
-          : "Terjadi kesalahan saat menyimpan panduan."
+          : tr("Terjadi kesalahan saat menyimpan panduan.")
       );
     } finally {
       setSaving(false);
@@ -503,7 +505,7 @@ export function ManageGuidesPage() {
         }
       }
 
-      showNotification("Panduan berhasil dihapus.");
+      showNotification(tr("Panduan berhasil dihapus."));
 
       setIsDeleteDialogOpen(false);
       setDeletingGuide(null);
@@ -515,7 +517,7 @@ export function ManageGuidesPage() {
       showNotification(
         err instanceof Error
           ? err.message
-          : "Gagal menghapus panduan.",
+          : tr("Gagal menghapus panduan."),
         "error"
       );
     } finally {
@@ -561,16 +563,17 @@ export function ManageGuidesPage() {
         <div>
           <div className="mb-2 flex items-center gap-2 text-sm font-medium text-teal-700">
             <BookOpen size={17} />
-            Manajemen Konten
+            {tr("Manajemen Konten")}
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            Kelola Panduan
+            {tr("Kelola Panduan")}
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            Kelola artikel, informasi, dan panduan kesehatan
-            untuk pengguna ApotekerKita.
+            {tr(
+              "Kelola artikel, informasi, dan panduan kesehatan untuk pengguna ApotekerKita.",
+            )}
           </p>
         </div>
 
@@ -580,7 +583,7 @@ export function ManageGuidesPage() {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
         >
           <Plus size={19} />
-          Tambah Panduan
+          {tr("Tambah Panduan")}
         </button>
       </div>
 
@@ -590,7 +593,7 @@ export function ManageGuidesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-500">
-                Total Panduan
+                {tr("Total Panduan")}
               </p>
               <p className="mt-2 text-3xl font-bold text-slate-900">
                 {totalGuides}
@@ -607,7 +610,7 @@ export function ManageGuidesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-500">
-                Total Kategori
+                {tr("Total Kategori")}
               </p>
               <p className="mt-2 text-3xl font-bold text-slate-900">
                 {totalCategories}
@@ -624,7 +627,7 @@ export function ManageGuidesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-500">
-                Hasil Pencarian
+                {tr("Hasil Pencarian")}
               </p>
               <p className="mt-2 text-3xl font-bold text-slate-900">
                 {totalFiltered}
@@ -651,7 +654,7 @@ export function ManageGuidesPage() {
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Cari judul, ringkasan, atau isi panduan..."
+              placeholder={tr("Cari judul, ringkasan, atau isi panduan...")}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
             />
           </div>
@@ -665,7 +668,7 @@ export function ManageGuidesPage() {
           >
             {categories.map((category) => (
               <option key={category} value={category}>
-                {category}
+                {tr(category)}
               </option>
             ))}
           </select>
@@ -679,7 +682,7 @@ export function ManageGuidesPage() {
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
           >
             <RefreshCw size={16} />
-            Reset
+            {tr("Reset")}
           </button>
         </div>
       </div>
@@ -689,10 +692,13 @@ export function ManageGuidesPage() {
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
           <div>
             <h2 className="font-semibold text-slate-900">
-              Daftar Panduan
+              {tr("Daftar Panduan")}
             </h2>
             <p className="mt-1 text-xs text-slate-500">
-              Menampilkan {filteredGuides.length} dari {guides.length} panduan
+              {tr("Menampilkan {shown} dari {total} panduan", {
+                shown: filteredGuides.length,
+                total: guides.length,
+              })}
             </p>
           </div>
         </div>
@@ -701,14 +707,14 @@ export function ManageGuidesPage() {
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="mb-3 animate-spin text-teal-600" size={32} />
             <p className="text-sm text-slate-500">
-              Memuat data panduan...
+              {tr("Memuat data panduan...")}
             </p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <AlertCircle size={35} className="mb-3 text-red-500" />
             <p className="font-semibold text-slate-800">
-              Gagal memuat panduan
+              {tr("Gagal memuat panduan")}
             </p>
             <p className="mt-2 max-w-md text-sm text-slate-500">
               {error}
@@ -718,7 +724,7 @@ export function ManageGuidesPage() {
               onClick={() => void loadGuides()}
               className="mt-5 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
             >
-              Coba Lagi
+              {tr("Coba Lagi")}
             </button>
           </div>
         ) : filteredGuides.length === 0 ? (
@@ -729,14 +735,14 @@ export function ManageGuidesPage() {
 
             <h3 className="font-semibold text-slate-800">
               {guides.length === 0
-                ? "Belum ada panduan"
-                : "Panduan tidak ditemukan"}
+                ? tr("Belum ada panduan")
+                : tr("Panduan tidak ditemukan")}
             </h3>
 
             <p className="mt-2 max-w-sm text-sm text-slate-500">
               {guides.length === 0
-                ? "Mulai tambahkan panduan kesehatan untuk pengguna."
-                : "Coba gunakan kata kunci atau kategori lainnya."}
+                ? tr("Mulai tambahkan panduan kesehatan untuk pengguna.")
+                : tr("Coba gunakan kata kunci atau kategori lainnya.")}
             </p>
 
             {guides.length === 0 && (
@@ -746,7 +752,7 @@ export function ManageGuidesPage() {
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
               >
                 <Plus size={17} />
-                Tambah Panduan
+                {tr("Tambah Panduan")}
               </button>
             )}
           </div>
@@ -757,11 +763,11 @@ export function ManageGuidesPage() {
               <table className="w-full text-left">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
-                    <th className="px-5 py-4 font-semibold">Panduan</th>
-                    <th className="px-5 py-4 font-semibold">Kategori</th>
-                    <th className="px-5 py-4 font-semibold">Ringkasan</th>
+                    <th className="px-5 py-4 font-semibold">{tr("Panduan")}</th>
+                    <th className="px-5 py-4 font-semibold">{tr("Kategori")}</th>
+                    <th className="px-5 py-4 font-semibold">{tr("Ringkasan")}</th>
                     <th className="px-5 py-4 text-right font-semibold">
-                      Aksi
+                      {tr("Aksi")}
                     </th>
                   </tr>
                 </thead>
@@ -813,7 +819,7 @@ export function ManageGuidesPage() {
                           <button
                             type="button"
                             onClick={() => openEditDialog(guide)}
-                            title="Edit panduan"
+                            title={tr("Edit panduan")}
                             className="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700"
                           >
                             <Pencil size={17} />
@@ -822,7 +828,7 @@ export function ManageGuidesPage() {
                           <button
                             type="button"
                             onClick={() => openDeleteDialog(guide)}
-                            title="Hapus panduan"
+                            title={tr("Hapus panduan")}
                             className="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
                           >
                             <Trash2 size={17} />
@@ -874,7 +880,7 @@ export function ManageGuidesPage() {
                         className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-teal-50 py-2.5 text-sm font-semibold text-teal-700 hover:bg-teal-100"
                       >
                         <Pencil size={16} />
-                        Edit
+                        {tr("Edit")}
                       </button>
 
                       <button
@@ -883,7 +889,7 @@ export function ManageGuidesPage() {
                         className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-50 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-100"
                       >
                         <Trash2 size={16} />
-                        Hapus
+                        {tr("Hapus")}
                       </button>
                     </div>
                   </div>
@@ -897,7 +903,7 @@ export function ManageGuidesPage() {
               totalItems={totalFiltered}
               pageSize={PAGE_SIZE}
               onPageChange={setPage}
-              itemLabel="panduan"
+              itemLabel={tr("panduan")}
             />
           </>
         )}
@@ -918,10 +924,10 @@ export function ManageGuidesPage() {
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-7">
               <div>
                 <h2 className="text-lg font-bold text-slate-900">
-                  {editingGuide ? "Edit Panduan" : "Tambah Panduan"}
+                  {editingGuide ? tr("Edit Panduan") : tr("Tambah Panduan")}
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
-                  Lengkapi informasi panduan kesehatan.
+                  {tr("Lengkapi informasi panduan kesehatan.")}
                 </p>
               </div>
 
@@ -944,7 +950,7 @@ export function ManageGuidesPage() {
                 {/* Image upload */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-slate-700">
-                    Gambar Panduan
+                    {tr("Gambar Panduan")}
                   </label>
 
                   <input
@@ -959,7 +965,7 @@ export function ManageGuidesPage() {
                     <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                       <img
                         src={imagePreview}
-                        alt="Preview gambar panduan"
+                        alt={tr("Preview gambar panduan")}
                         className="h-52 w-full object-cover sm:h-64"
                       />
 
@@ -973,7 +979,7 @@ export function ManageGuidesPage() {
                           className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-md hover:bg-slate-100"
                         >
                           <Upload size={15} />
-                          Ganti
+                          {tr("Ganti")}
                         </button>
 
                         <button
@@ -981,7 +987,7 @@ export function ManageGuidesPage() {
                           onClick={handleRemoveImage}
                           disabled={saving}
                           className="rounded-lg bg-white p-2 text-red-600 shadow-md hover:bg-red-50"
-                          title="Hapus gambar"
+                          title={tr("Hapus gambar")}
                         >
                           <X size={17} />
                         </button>
@@ -1007,11 +1013,11 @@ export function ManageGuidesPage() {
                       </div>
 
                       <span className="text-sm font-semibold text-slate-800">
-                        Klik untuk memilih gambar
+                        {tr("Klik untuk memilih gambar")}
                       </span>
 
                       <span className="mt-1 text-xs text-slate-500">
-                        JPG, PNG, WEBP · Maksimal 5 MB
+                        {tr("JPG, PNG, WEBP · Maksimal 5 MB")}
                       </span>
                     </button>
                   )}
@@ -1023,7 +1029,7 @@ export function ManageGuidesPage() {
                     htmlFor="guide-title"
                     className="block text-sm font-semibold text-slate-700"
                   >
-                    Judul Panduan <span className="text-red-500">*</span>
+                    {tr("Judul Panduan")} <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -1031,7 +1037,7 @@ export function ManageGuidesPage() {
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    placeholder="Contoh: Cara Menggunakan Obat dengan Benar"
+                    placeholder={tr("Contoh: Cara Menggunakan Obat dengan Benar")}
                     required
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                   />
@@ -1043,7 +1049,7 @@ export function ManageGuidesPage() {
                     htmlFor="guide-category"
                     className="block text-sm font-semibold text-slate-700"
                   >
-                    Kategori <span className="text-red-500">*</span>
+                    {tr("Kategori")} <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -1051,7 +1057,7 @@ export function ManageGuidesPage() {
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
-                    placeholder="Contoh: Penggunaan Obat"
+                    placeholder={tr("Contoh: Penggunaan Obat")}
                     required
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                   />
@@ -1063,7 +1069,7 @@ export function ManageGuidesPage() {
                     htmlFor="guide-summary"
                     className="block text-sm font-semibold text-slate-700"
                   >
-                    Ringkasan <span className="text-red-500">*</span>
+                    {tr("Ringkasan")} <span className="text-red-500">*</span>
                   </label>
 
                   <textarea
@@ -1071,7 +1077,7 @@ export function ManageGuidesPage() {
                     name="summary"
                     value={formData.summary}
                     onChange={handleInputChange}
-                    placeholder="Tuliskan ringkasan singkat panduan..."
+                    placeholder={tr("Tuliskan ringkasan singkat panduan...")}
                     rows={3}
                     required
                     className="w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm leading-relaxed outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
@@ -1084,7 +1090,7 @@ export function ManageGuidesPage() {
                     htmlFor="guide-content"
                     className="block text-sm font-semibold text-slate-700"
                   >
-                    Isi Panduan <span className="text-red-500">*</span>
+                    {tr("Isi Panduan")} <span className="text-red-500">*</span>
                   </label>
 
                   <textarea
@@ -1092,14 +1098,16 @@ export function ManageGuidesPage() {
                     name="content"
                     value={formData.content}
                     onChange={handleInputChange}
-                    placeholder="Tuliskan isi panduan secara lengkap..."
+                    placeholder={tr("Tuliskan isi panduan secara lengkap...")}
                     rows={8}
                     required
                     className="w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm leading-relaxed outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                   />
 
                   <p className="text-xs text-slate-400">
-                    Kamu dapat menulis isi panduan dengan beberapa paragraf.
+                    {tr(
+                      "Kamu dapat menulis isi panduan dengan beberapa paragraf.",
+                    )}
                   </p>
                 </div>
 
@@ -1123,7 +1131,7 @@ export function ManageGuidesPage() {
                   disabled={saving}
                   className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-50"
                 >
-                  Batal
+                  {tr("Batal")}
                 </button>
 
                 <button
@@ -1134,14 +1142,14 @@ export function ManageGuidesPage() {
                   {saving ? (
                     <>
                       <Loader2 size={17} className="animate-spin" />
-                      Menyimpan...
+                      {tr("Menyimpan...")}
                     </>
                   ) : (
                     <>
                       <Upload size={17} />
                       {editingGuide
-                        ? "Simpan Perubahan"
-                        : "Simpan Panduan"}
+                        ? tr("Simpan Perubahan")
+                        : tr("Simpan Panduan")}
                     </>
                   )}
                 </button>
@@ -1160,15 +1168,15 @@ export function ManageGuidesPage() {
             </div>
 
             <h2 className="text-lg font-bold text-slate-900">
-              Hapus Panduan?
+              {tr("Hapus Panduan?")}
             </h2>
 
             <p className="mt-2 text-sm leading-relaxed text-slate-500">
-              Apakah kamu yakin ingin menghapus panduan{" "}
+              {tr("Apakah kamu yakin ingin menghapus panduan")}{" "}
               <strong className="text-slate-800">
                 {deletingGuide?.title}
               </strong>
-              ? Tindakan ini tidak dapat dibatalkan.
+              {tr("? Tindakan ini tidak dapat dibatalkan.")}
             </p>
 
             <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -1181,7 +1189,7 @@ export function ManageGuidesPage() {
                 disabled={deleting}
                 className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
               >
-                Batal
+                {tr("Batal")}
               </button>
 
               <button
@@ -1193,12 +1201,12 @@ export function ManageGuidesPage() {
                 {deleting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    Menghapus...
+                    {tr("Menghapus...")}
                   </>
                 ) : (
                   <>
                     <Trash2 size={16} />
-                    Ya, Hapus
+                    {tr("Ya, Hapus")}
                   </>
                 )}
               </button>

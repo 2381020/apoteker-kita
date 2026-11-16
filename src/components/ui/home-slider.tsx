@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 export interface SliderItem {
   title: string;
@@ -59,6 +60,7 @@ const ITEMS: SliderItem[] = [
 ];
 
 export function HomeSlider({ items = ITEMS }: { items?: SliderItem[] }) {
+  const { tr, lang } = useLanguage();
   const trackRef = React.useRef<HTMLDivElement>(null);
   const [active, setActive] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
@@ -128,56 +130,43 @@ export function HomeSlider({ items = ITEMS }: { items?: SliderItem[] }) {
         {items.map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.title} className="shrink-0 snap-start basis-full px-2">
+            <div
+              key={item.href}
+              className="relative flex flex-col items-center gap-2 min-w-[160px] shrink-0 cursor-pointer hover:scale-[105%] transition-transform"
+            >
+              <Icon
+                className={cn(
+                  "h-12 w-12 mx-auto text-[#263238]",
+                  lang === "en" ? "text-[#FFE082]" : ""
+                )}
+              />
+              <p className="text-center text-xs font-medium text-[#263238]">
+                {tr(item.title)}
+              </p>
+              <p className="text-center text-[10px] text-[#6B7280]">
+                {tr(item.description)}
+              </p>
               <Link
                 to={item.href}
-                className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:border-primary/40 hover:shadow-soft sm:p-6"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#263238] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#37474F] hover:shadow-md sm:w-auto"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <h3 className="mt-4 text-base font-semibold text-main-text sm:text-lg">{item.title}</h3>
-                <p className="mt-1.5 flex-1 text-sm leading-relaxed text-secondary-text">{item.description}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:underline">
-                  {item.cta}
-                  <ChevronRight className="h-4 w-4" />
-                </span>
+                {tr(item.cta)}
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
           );
         })}
       </div>
-
-      <button
-        onClick={prev}
-        aria-label="Sebelumnya"
-        className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface shadow-soft transition-colors hover:bg-primary-soft"
-      >
-        <ChevronLeft className="h-5 w-5 text-main-text" />
-      </button>
-      <button
-        onClick={next}
-        aria-label="Berikutnya"
-        className="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface shadow-soft transition-colors hover:bg-primary-soft"
-      >
-        <ChevronRight className="h-5 w-5 text-main-text" />
-      </button>
-
-      <div className="mt-5 flex items-center justify-center gap-2">
-        {items.map((item, i) => (
-          <button
-            key={item.title}
-            onClick={() => scrollToIndex(i)}
-            aria-label={`Ke fitur ${i + 1}: ${item.title}`}
-            className={cn(
-              "h-2 rounded-full transition-all",
-              i === active ? "w-6 bg-brand" : "w-2 bg-border hover:bg-secondary-text/30"
-            )}
-          />
-        ))}
-      </div>
     </div>
   );
 }
-
-export default HomeSlider;

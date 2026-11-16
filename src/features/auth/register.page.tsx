@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
+import { useLanguage } from "@/lib/i18n";
 
 const schema = z
   .object({
@@ -24,6 +25,7 @@ const schema = z
   });
 
 export function RegisterPage() {
+  const { tr } = useLanguage();
   const navigate = useNavigate();
   const { register: regAuth } = useAuth();
   const [error, setError] = useState("");
@@ -60,18 +62,20 @@ export function RegisterPage() {
       });
 
       if (!r.ok) {
-        setError(r.error ?? "Pendaftaran gagal");
+        setError(r.error ?? tr("Pendaftaran gagal"));
         return;
       }
       if (r.needsEmailConfirmation) {
         setInfo(
-          "Akun berhasil dibuat. Periksa email Anda untuk konfirmasi, lalu masuk.",
+          tr(
+            "Akun berhasil dibuat. Periksa email Anda untuk konfirmasi, lalu masuk."
+          )
         );
         return;
       }
       navigate("/dashboard");
     } catch {
-      setError("Terjadi kesalahan saat mendaftar. Silakan coba kembali.");
+      setError(tr("Terjadi kesalahan saat mendaftar. Silakan coba kembali."));
     } finally {
       setSubmitting(false);
     }
@@ -88,14 +92,14 @@ export function RegisterPage() {
           />
         </div>
         <h1 className="mt-4 text-2xl font-bold tracking-tight text-main-text">
-          Daftar Akun Baru
+          {tr("Daftar Akun Baru")}
         </h1>
       </div>
 
       {error && (
         <Alert
           variant="destructive"
-          title="Kesalahan"
+          title={tr("Kesalahan")}
           description={error}
           className="mt-6"
         />
@@ -103,7 +107,7 @@ export function RegisterPage() {
       {info && (
         <Alert
           variant="success"
-          title="Berhasil"
+          title={tr("Berhasil")}
           description={info}
           className="mt-6"
         />
@@ -111,7 +115,7 @@ export function RegisterPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="fullName">Nama Lengkap</Label>
+          <Label htmlFor="fullName">{tr("Nama Lengkap")}</Label>
           <div className="relative">
             <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-text" />
             <Input
@@ -122,9 +126,9 @@ export function RegisterPage() {
               {...register("fullName")}
             />
           </div>
-          {errors.fullName && (
+          {errors.fullName?.message && (
             <p className="text-sm text-destructive">
-              {errors.fullName.message}
+              {tr(errors.fullName.message)}
             </p>
           )}
         </div>
@@ -141,45 +145,45 @@ export function RegisterPage() {
               {...register("email")}
             />
           </div>
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
+          {errors.email?.message && (
+            <p className="text-sm text-destructive">{tr(errors.email.message)}</p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Kata Sandi</Label>
+          <Label htmlFor="password">{tr("Kata Sandi")}</Label>
           <div className="relative">
             <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-text" />
             <Input
               id="password"
               type="password"
-              placeholder="Minimal 6 karakter"
+              placeholder={tr("Minimal 6 karakter")}
               autoComplete="new-password"
               className="pl-9"
               {...register("password")}
             />
           </div>
-          {errors.password && (
+          {errors.password?.message && (
             <p className="text-sm text-destructive">
-              {errors.password.message}
+              {tr(errors.password.message)}
             </p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi</Label>
+          <Label htmlFor="confirmPassword">{tr("Konfirmasi Kata Sandi")}</Label>
           <div className="relative">
             <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-text" />
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="Ulangi kata sandi"
+              placeholder={tr("Ulangi kata sandi")}
               autoComplete="new-password"
               className="pl-9"
               {...register("confirmPassword")}
             />
           </div>
-          {errors.confirmPassword && (
+          {errors.confirmPassword?.message && (
             <p className="text-sm text-destructive">
-              {errors.confirmPassword.message}
+              {tr(errors.confirmPassword.message)}
             </p>
           )}
         </div>
@@ -189,15 +193,15 @@ export function RegisterPage() {
           className="w-full"
           disabled={submitting}
         >
-          {submitting ? "Memproses..." : "Daftar"}
+          {submitting ? tr("Memproses...") : tr("Daftar")}
         </Button>
         <p className="pt-1 text-center text-sm text-secondary-text">
-          Sudah punya akun?{" "}
+          {tr("Sudah punya akun?")}{" "}
           <Link
             to="/login"
             className="font-semibold text-primary hover:underline"
           >
-            Masuk di sini
+            {tr("Masuk di sini")}
           </Link>
         </p>
       </form>

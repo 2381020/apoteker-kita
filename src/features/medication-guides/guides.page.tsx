@@ -14,6 +14,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
+import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 6;
 
@@ -27,24 +28,26 @@ function GuideCard({
   onSelect: (guide: Guide) => void;
   onTagSelect: (tag: string) => void;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <Card className="flex h-full flex-col p-4 transition-shadow duration-200 hover:shadow-soft sm:p-5">
       <PlaceholderImage
           src={guide.imageUrl || "/images/placeholder.jpg"}
-          alt={guide.title}
+          alt={tr(guide.title)}
           className="mb-4 h-40 w-full rounded-md object-cover sm:h-48"
         />
 
       <span className="w-fit rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-secondary">
-        {guide.category}
+        {tr(guide.category)}
       </span>
 
       <h3 className="mt-3 text-base font-semibold leading-snug text-main-text">
-        {guide.title}
+        {tr(guide.title)}
       </h3>
 
       <p className="mt-2 flex-1 text-sm leading-relaxed text-secondary-text">
-        {guide.summary}
+        {tr(guide.summary)}
       </p>
 
       {guide.tags.length > 0 && (
@@ -55,7 +58,7 @@ function GuideCard({
               type="button"
               onClick={() => onTagSelect(tag)}
               className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-secondary-text transition-colors hover:bg-primary-soft hover:text-primary"
-              aria-label={`Cari panduan dengan tag ${tag}`}
+              aria-label={tr("Cari panduan dengan tag {tag}", { tag })}
             >
               <Tag size={12} />
               {tag}
@@ -69,7 +72,7 @@ function GuideCard({
         className="mt-5 w-full justify-between"
         onClick={() => onSelect(guide)}
       >
-        Baca selengkapnya
+        {tr("Baca selengkapnya")}
         <ArrowRight size={16} className="text-primary" />
       </Button>
     </Card>
@@ -84,36 +87,38 @@ function GuideDetails({
   guide: Guide;
   onClose: () => void;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="space-y-5">
       <PlaceholderImage
           src={guide.imageUrl || "/images/placeholder.jpg"}
-          alt={guide.title}
+          alt={tr(guide.title)}
           className="mb-4 h-32 w-full rounded-md object-cover sm:h-40"
         />
 
       <span className="inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-secondary">
-        {guide.category}
+        {tr(guide.category)}
       </span>
 
       <div className="space-y-4">
         <section>
           <h4 className="text-sm font-semibold text-main-text">
-            Ringkasan
+            {tr("Ringkasan")}
           </h4>
 
           <p className="mt-2 text-sm leading-relaxed text-secondary-text">
-            {guide.summary}
+            {tr(guide.summary)}
           </p>
         </section>
 
         <section className="border-t border-border pt-4">
           <h4 className="mb-2 text-sm font-semibold text-main-text">
-            Isi panduan
+            {tr("Isi panduan")}
           </h4>
 
           <div className="whitespace-pre-line text-sm leading-7 text-secondary-text">
-            {guide.content}
+            {tr(guide.content)}
           </div>
         </section>
       </div>
@@ -137,7 +142,7 @@ function GuideDetails({
         onClick={onClose}
       >
         <X size={16} className="mr-2" />
-        Tutup
+        {tr("Tutup")}
       </Button>
     </div>
   );
@@ -145,6 +150,7 @@ function GuideDetails({
 
 // Main page
 export function PanduanPage() {
+  const { tr } = useLanguage();
   const [guides, setGuides] = useState<Guide[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -223,12 +229,12 @@ export function PanduanPage() {
       {/* Search and category filter */}
       <section
         className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-center"
-        aria-label="Pencarian panduan"
+        aria-label={tr("Pencarian panduan")}
       >
         <SearchBar
           value={search}
           onChange={setSearch}
-          placeholder="Cari judul, ringkasan, atau tag..."
+          placeholder={tr("Cari judul, ringkasan, atau tag...")}
           className="flex-1"
         />
 
@@ -237,13 +243,13 @@ export function PanduanPage() {
             value={category}
             onChange={(event) => setCategory(event.target.value)}
             className="h-10 min-w-0 flex-1 rounded-lg border border-input bg-surface px-3 text-sm text-main-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-48 sm:flex-none"
-            aria-label="Filter kategori panduan"
+            aria-label={tr("Filter kategori panduan")}
           >
-            <option value="">Semua Kategori</option>
+            <option value="">{tr("Semua Kategori")}</option>
 
             {categories.map((item) => (
               <option key={item} value={item}>
-                {item}
+                {tr(item)}
               </option>
             ))}
           </select>
@@ -252,11 +258,11 @@ export function PanduanPage() {
             <Button
               variant="outline"
               onClick={resetFilters}
-              aria-label="Reset filter"
+              aria-label={tr("Reset filter")}
               className="shrink-0 px-3"
             >
               <RotateCcw size={15} className="sm:mr-1.5" />
-              <span className="hidden sm:inline">Reset</span>
+              <span className="hidden sm:inline">{tr("Reset")}</span>
             </Button>
           )}
         </div>
@@ -266,7 +272,7 @@ export function PanduanPage() {
       {hasActiveFilter && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-secondary-text">
-            Filter aktif:
+            {tr("Filter aktif:")}
           </span>
 
           {search.trim() && (
@@ -277,7 +283,7 @@ export function PanduanPage() {
                 type="button"
                 onClick={() => setSearch("")}
                 className="rounded-full p-0.5 transition-colors hover:bg-primary/20"
-                aria-label="Hapus filter pencarian"
+                aria-label={tr("Hapus filter pencarian")}
               >
                 <X size={13} />
               </button>
@@ -286,13 +292,13 @@ export function PanduanPage() {
 
           {category && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-secondary">
-              {category}
+              {tr(category)}
 
               <button
                 type="button"
                 onClick={() => setCategory("")}
                 className="rounded-full p-0.5 transition-colors hover:bg-primary/20"
-                aria-label="Hapus filter kategori"
+                aria-label={tr("Hapus filter kategori")}
               >
                 <X size={13} />
               </button>
@@ -303,26 +309,26 @@ export function PanduanPage() {
 
       {/* Result count */}
       <p className="text-sm text-secondary-text">
-        Menampilkan{" "}
+        {tr("Menampilkan")}{" "}
         <span className="font-semibold text-main-text">
           {filteredGuides.length}
         </span>{" "}
-        dari {guides.length} artikel
+        {tr("dari")} {guides.length} {tr("artikel")}
       </p>
 
       {/* Guide list */}
       {filteredGuides.length === 0 ? (
         <EmptyState
-          title="Panduan tidak ditemukan"
-          description="Coba gunakan kata kunci lain atau pilih kategori yang berbeda."
-          actionLabel="Reset filter"
+          title={tr("Panduan tidak ditemukan")}
+          description={tr("Coba gunakan kata kunci lain atau pilih kategori yang berbeda.")}
+          actionLabel={tr("Reset filter")}
           onAction={resetFilters}
         />
       ) : (
         <>
           <section
             className="grid grid-cols-1 gap-4 sm:grid-cols-2"
-            aria-label="Daftar panduan"
+            aria-label={tr("Daftar panduan")}
           >
             {pageItems.map((guide) => (
               <GuideCard
@@ -352,7 +358,7 @@ export function PanduanPage() {
         onOpenChange={(open) => {
           if (!open) setSelected(null);
         }}
-        title={selected?.title}
+        title={selected ? tr(selected.title) : undefined}
       >
         {selected && (
           <GuideDetails

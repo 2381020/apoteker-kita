@@ -4,6 +4,7 @@ import { Loader2, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { searchDrugNames } from "@/services/drugs.service";
+import { useLanguage } from "@/lib/i18n";
 
 interface DrugComboboxProps {
   id?: string;
@@ -22,6 +23,7 @@ export function DrugCombobox({
   disabled = false,
   exclude,
 }: DrugComboboxProps) {
+  const { tr } = useLanguage();
   const rootRef = useRef<HTMLDivElement>(null);
   const selectedRef = useRef(false);
 
@@ -91,7 +93,7 @@ export function DrugCombobox({
           id={id}
           value={inputValue}
           disabled={disabled}
-          placeholder={placeholder}
+          placeholder={tr(placeholder)}
           className="pl-9 pr-9"
           autoComplete="off"
           role="combobox"
@@ -138,7 +140,7 @@ export function DrugCombobox({
         {value && !disabled && (
           <button
             type="button"
-            aria-label="Hapus pilihan obat"
+            aria-label={tr("Hapus pilihan obat")}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-secondary-text hover:bg-accent hover:text-main-text"
             onClick={() => {
               onChange("");
@@ -159,11 +161,11 @@ export function DrugCombobox({
           {loading ? (
             <li className="flex items-center gap-2 px-3 py-2 text-sm text-secondary-text">
               <Loader2 size={14} className="animate-spin" />
-              Mencari obat...
+              {tr("Mencari obat...")}
             </li>
           ) : options.length === 0 ? (
             <li className="px-3 py-2 text-sm text-secondary-text">
-              Obat tidak ditemukan.
+              {tr("Obat tidak ditemukan.")}
             </li>
           ) : (
             options.map((name, index) => (

@@ -65,7 +65,7 @@ interface NavbarProps {
 
 export function Navbar({ withTopBar = true }: NavbarProps = {}) {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
-  const { navLabel } = useLanguage();
+  const { t, tr, navLabel } = useLanguage();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -203,7 +203,9 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                 "transition-colors hover:bg-accent hover:text-main-text",
                 "lg:hidden"
               )}
-              aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
+              aria-label={
+                mobileOpen ? t("navbar_menu_close") : t("navbar_menu_open")
+              }
               aria-expanded={mobileOpen}
             >
               {mobileOpen ? (
@@ -274,7 +276,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
                   aria-expanded={userMenuOpen}
-                  aria-label="Menu akun"
+                  aria-label={tr("Menu akun")}
                   className={cn(
                     "flex min-h-11 items-center gap-2",
                     "rounded-full border border-border",
@@ -348,7 +350,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                             )}
                           >
                             <Icon className="h-4 w-4" />
-                            {l.label}
+                            {navLabel(l.href, l.label)}
                           </Link>
                         );
                       })}
@@ -357,7 +359,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
 
                       <div className="mt-1 border-t border-border pt-1">
                         <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-secondary-text">
-                          Akun
+                          {t("mobile_account")}
                         </p>
 
                         {accountLinks.map((l) => {
@@ -378,7 +380,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                               )}
                             >
                               <Icon className="h-4 w-4" />
-                              {l.label}
+                              {navLabel(l.href, l.label)}
                             </Link>
                           );
                         })}
@@ -402,7 +404,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                           )}
                         >
                           <LogOut className="h-4 w-4" />
-                          Keluar
+                          {t("navbar_logout")}
                         </button>
                       </div>
                     </div>
@@ -417,7 +419,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                   size="sm"
                   className="hidden min-h-11 px-2.5 text-xs sm:inline-flex sm:px-3 sm:text-sm"
                 >
-                  <Link to="/login">Masuk</Link>
+                  <Link to="/login">{t("navbar_login")}</Link>
                 </Button>
 
                 <Button
@@ -425,7 +427,7 @@ export function Navbar({ withTopBar = true }: NavbarProps = {}) {
                   size="sm"
                   className="hidden min-h-11 bg-brand px-2.5 text-xs text-brand-foreground hover:bg-brand-hover sm:inline-flex sm:px-3 sm:text-sm"
                 >
-                  <Link to="/register">Daftar</Link>
+                  <Link to="/register">{t("navbar_register")}</Link>
                 </Button>
               </>
             )}

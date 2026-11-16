@@ -19,9 +19,11 @@ import { PageHeader } from "@/components/shared/page-header";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useLanguage } from "@/lib/i18n";
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const { lang, t, tr } = useLanguage();
   const navigate = useNavigate();
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [history, setHistory] = useState<ConsumptionHistory[]>([]);
@@ -65,37 +67,40 @@ export function DashboardPage() {
     <div className="animate-fade-in space-y-6">
       <PageHeader
         title="Dashboard"
-        description={`Selamat datang, ${user?.fullName}. Berikut ringkasan aktivitas obat Anda.`}
+        description={tr(
+          "Selamat datang, {name}. Berikut ringkasan aktivitas obat Anda.",
+          { name: user?.fullName ?? "" },
+        )}
         icon={Pill}
       >
         <Button asChild>
           <Link to="/pengingat">
             <Plus className="mr-1.5 h-4 w-4" />
-            Tambah Pengingat
+            {tr("Tambah Pengingat")}
           </Link>
         </Button>
       </PageHeader>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard
-          title="Total Obat"
+          title={tr("Total Obat")}
           value={reminders.length}
           icon={Pill}
-          description="Obat yang Anda kelola"
+          description={tr("Obat yang Anda kelola")}
           accent="primary"
         />
         <StatCard
-          title="Pengingat Aktif"
+          title={tr("Pengingat Aktif")}
           value={active}
           icon={BellRing}
-          description="Jadwal minum yang aktif"
+          description={tr("Jadwal minum yang aktif")}
           accent="secondary"
         />
         <StatCard
-          title="Ditempuh Hari Ini"
+          title={tr("Ditempuh Hari Ini")}
           value={todayCount}
           icon={CheckCircle2}
-          description="Konsumsi tercatat hari ini"
+          description={tr("Konsumsi tercatat hari ini")}
           accent="success"
         />
       </div>
@@ -105,13 +110,13 @@ export function DashboardPage() {
           <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-4 sm:px-5">
             <h2 className="flex items-center gap-2 text-base font-semibold text-main-text">
               <CalendarClock className="h-5 w-5 text-primary" />
-              Pengingat Mendatang
+              {tr("Pengingat Mendatang")}
             </h2>
             <Link
               to="/pengingat"
               className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary sm:text-sm"
             >
-              Lihat semua <ArrowRight className="h-4 w-4" />
+              {tr("Lihat semua")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="p-2">
@@ -119,9 +124,11 @@ export function DashboardPage() {
               <div className="px-3 py-6">
                 <EmptyState
                   icon={BellRing}
-                  title="Belum ada pengingat aktif"
-                  description="Buat pengingat pertama Anda agar tidak melewatkan jadwal minum obat."
-                  actionLabel="Buat pengingat"
+                  title={tr("Belum ada pengingat aktif")}
+                  description={tr(
+                    "Buat pengingat pertama Anda agar tidak melewatkan jadwal minum obat.",
+                  )}
+                  actionLabel={tr("Buat pengingat")}
                   onAction={() => navigate("/pengingat")}
                 />
               </div>
@@ -141,7 +148,7 @@ export function DashboardPage() {
                       </p>
                     </div>
                     <Badge variant="success" className="shrink-0">
-                      Aktif
+                      {tr("Aktif")}
                     </Badge>
                   </li>
                 ))}
@@ -154,13 +161,13 @@ export function DashboardPage() {
           <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-4 sm:px-5">
             <h2 className="flex items-center gap-2 text-base font-semibold text-main-text">
               <CheckCircle2 className="h-5 w-5 text-success" />
-              Riwayat Terkini
+              {tr("Riwayat Terkini")}
             </h2>
             <Link
               to="/riwayat"
               className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary sm:text-sm"
             >
-              Lihat semua <ArrowRight className="h-4 w-4" />
+              {tr("Lihat semua")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="p-2">
@@ -168,8 +175,10 @@ export function DashboardPage() {
               <div className="px-3 py-6">
                 <EmptyState
                   icon={CheckCircle2}
-                  title="Belum ada riwayat"
-                  description="Riwayat konsumsi obat Anda akan muncul di sini."
+                  title={tr("Belum ada riwayat")}
+                  description={tr(
+                    "Riwayat konsumsi obat Anda akan muncul di sini.",
+                  )}
                 />
               </div>
             ) : (
@@ -184,11 +193,14 @@ export function DashboardPage() {
                         {h.medicationName}
                       </p>
                       <p className="text-xs text-secondary-text">
-                        {new Date(h.takenAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(h.takenAt).toLocaleDateString(
+                          lang === "en" ? "en-US" : "id-ID",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </p>
                     </div>
                     <Badge
@@ -201,7 +213,7 @@ export function DashboardPage() {
                       }
                       className="shrink-0"
                     >
-                      {h.status}
+                      {tr(h.status)}
                     </Badge>
                   </li>
                 ))}
@@ -217,19 +229,20 @@ export function DashboardPage() {
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-main-text">
-            Butuh informasi obat lain?
+            {tr("Butuh informasi obat lain?")}
           </h3>
           <p className="mt-0.5 text-sm text-secondary-text">
-            Jelajahi database obat atau periksa interaksi sebelum mengonsumsi
-            obat baru.
+            {tr(
+              "Jelajahi database obat atau periksa interaksi sebelum mengonsumsi obat baru.",
+            )}
           </p>
         </div>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
           <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link to="/interaksi">Cek Interaksi</Link>
+            <Link to="/interaksi">{tr("Cek Interaksi")}</Link>
           </Button>
           <Button asChild className="w-full sm:w-auto">
-            <Link to="/tanya">Tanya Apoteker</Link>
+            <Link to="/tanya">{tr("Tanya Apoteker")}</Link>
           </Button>
         </div>
       </Card>

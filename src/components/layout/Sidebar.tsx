@@ -1,9 +1,9 @@
-﻿
+﻿ 
 import { SidebarNav } from "@/components/layout/SidebarNav";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/lib/i18n";
 import {
   SIDEBAR_ADMIN,
-  SIDEBAR_LAYANAN,
   SIDEBAR_UTAMA,
   SIDEBAR_AKUN,
 } from "@/lib/nav-config";
@@ -19,17 +19,16 @@ export function Sidebar({
   withTopBar = true,
 }: SidebarProps) {
   const { isAdmin } = useAuth();
+  const { t } = useLanguage();
 
   const groups = isAdmin
     ? [
-        { title: "Admin", items: SIDEBAR_ADMIN },
-        { title: "Layanan", items: SIDEBAR_LAYANAN },
-        { title: "Akun", items: SIDEBAR_AKUN },
+        { title: t("mobile_admin"), items: SIDEBAR_ADMIN },
+        { title: t("mobile_account"), items: SIDEBAR_AKUN },
       ]
     : [
-        { title: "Menu", items: SIDEBAR_UTAMA },
-        { title: "Layanan", items: SIDEBAR_LAYANAN },
-        { title: "Akun", items: SIDEBAR_AKUN },
+        { title: t("sidebar_menu"), items: SIDEBAR_UTAMA },
+        { title: t("mobile_account"), items: SIDEBAR_AKUN },
       ];
 
   return (

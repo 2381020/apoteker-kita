@@ -29,6 +29,7 @@ import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 20;
 
@@ -45,6 +46,8 @@ const sevVariant = (
 
 export function ManageInteractionsPage() {
   const { add } = useToast();
+  const { lang, tr } = useLanguage();
+  const locale = lang === "en" ? "en-US" : "id-ID";
   const [list, setList] = useState<Interaction[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -105,14 +108,14 @@ export function ManageInteractionsPage() {
       if (form.id) {
         const updated = await updateInteraction(form.id, input);
         add({
-          title: "Interaksi diperbarui",
+          title: tr("Interaksi diperbarui"),
           description: `${updated.medicationA} + ${updated.medicationB}`,
           variant: "success",
         });
       } else {
         const created = await createInteraction(input);
         add({
-          title: "Interaksi ditambahkan",
+          title: tr("Interaksi ditambahkan"),
           description: `${created.medicationA} + ${created.medicationB}`,
           variant: "success",
         });
@@ -122,8 +125,8 @@ export function ManageInteractionsPage() {
       await load();
     } catch (error) {
       add({
-        title: "Gagal menyimpan interaksi",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan",
+        title: tr("Gagal menyimpan interaksi"),
+        description: error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     } finally {
@@ -146,14 +149,14 @@ export function ManageInteractionsPage() {
         await load();
       }
       add({
-        title: "Interaksi dihapus",
+        title: tr("Interaksi dihapus"),
         description: target ? `${target.medicationA} + ${target.medicationB}` : undefined,
         variant: "success",
       });
     } catch (error) {
       add({
-        title: "Gagal menghapus interaksi",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan",
+        title: tr("Gagal menghapus interaksi"),
+        description: error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     }
@@ -163,7 +166,7 @@ export function ManageInteractionsPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <PageHeader title="Kelola Interaksi" description="Kelola data interaksi antar obat." icon={Activity}>
+      <PageHeader title={tr("Kelola Interaksi")} description={tr("Kelola data interaksi antar obat.")} icon={Activity}>
         <Button
           onClick={() => {
             setForm({});
@@ -171,15 +174,17 @@ export function ManageInteractionsPage() {
           }}
         >
           <Plus className="mr-1.5 h-4 w-4" />
-          Tambah Interaksi
+          {tr("Tambah Interaksi")}
         </Button>
       </PageHeader>
 
       <Card className="overflow-hidden">
         <div className="border-b border-border px-5 py-4">
-          <h2 className="text-base font-semibold text-main-text">Daftar Interaksi</h2>
+          <h2 className="text-base font-semibold text-main-text">{tr("Daftar Interaksi")}</h2>
           <p className="mt-0.5 text-sm text-secondary-text">
-            {total.toLocaleString("id-ID")} interaksi tercatat
+            {tr("{count} interaksi tercatat", {
+              count: total.toLocaleString(locale),
+            })}
           </p>
 
           <div className="relative mt-3 max-w-sm">
@@ -190,7 +195,7 @@ export function ManageInteractionsPage() {
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Cari nama obat..."
+              placeholder={tr("Cari nama obat...")}
               className="pl-9"
             />
           </div>
@@ -200,11 +205,15 @@ export function ManageInteractionsPage() {
           <div className="p-6">
             <EmptyState
               icon={SearchX}
-              title={query ? "Tidak ada hasil" : "Belum ada data interaksi"}
+              title={query ? tr("Tidak ada hasil") : tr("Belum ada data interaksi")}
               description={
                 query
-                  ? `Tidak ditemukan interaksi untuk "${query}".`
-                  : "Tambahkan interaksi atau impor dataset dari menu Import Interaksi."
+                  ? tr("Tidak ditemukan interaksi untuk \"{query}\".", {
+                      query,
+                    })
+                  : tr(
+                      "Tambahkan interaksi atau impor dataset dari menu Import Interaksi.",
+                    )
               }
             />
           </div>
@@ -218,21 +227,21 @@ export function ManageInteractionsPage() {
                       {i.medicationA} <span className="text-secondary-text">+</span> {i.medicationB}
                     </p>
                     <Badge variant={sevVariant(i.severity)} className="shrink-0">
-                      {i.severity}
+                      {tr(i.severity)}
                     </Badge>
                   </div>
                   <div className="mt-2.5 flex gap-1.5">
-                    <Button size="sm" variant="outline" onClick={() => edit(i)} aria-label="Edit interaksi">
+                    <Button size="sm" variant="outline" onClick={() => edit(i)} aria-label={tr("Edit interaksi")}>
                       <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => setDeleteId(i.id)}
-                      aria-label="Hapus interaksi"
+                      aria-label={tr("Hapus interaksi")}
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      <Trash2 className="mr-1 h-3.5 w-3.5" /> Hapus
+                      <Trash2 className="mr-1 h-3.5 w-3.5" /> {tr("Hapus")}
                     </Button>
                   </div>
                 </li>
@@ -243,10 +252,10 @@ export function ManageInteractionsPage() {
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-secondary-text">
-                    <th className="px-5 py-3 font-semibold">Obat A</th>
-                    <th className="px-3 py-3 font-semibold">Obat B</th>
-                    <th className="px-3 py-3 font-semibold">Severity</th>
-                    <th className="px-5 py-3 text-right font-semibold">Aksi</th>
+                    <th className="px-5 py-3 font-semibold">{tr("Obat A")}</th>
+                    <th className="px-3 py-3 font-semibold">{tr("Obat B")}</th>
+                    <th className="px-3 py-3 font-semibold">{tr("Severity")}</th>
+                    <th className="px-5 py-3 text-right font-semibold">{tr("Aksi")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -255,18 +264,18 @@ export function ManageInteractionsPage() {
                       <td className="px-5 py-3.5 font-medium text-main-text">{i.medicationA}</td>
                       <td className="px-3 py-3.5 font-medium text-main-text">{i.medicationB}</td>
                       <td className="px-3 py-3.5">
-                        <Badge variant={sevVariant(i.severity)}>{i.severity}</Badge>
+                        <Badge variant={sevVariant(i.severity)}>{tr(i.severity)}</Badge>
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="flex justify-end gap-1.5">
-                          <Button size="sm" variant="outline" onClick={() => edit(i)} aria-label="Edit interaksi">
+                          <Button size="sm" variant="outline" onClick={() => edit(i)} aria-label={tr("Edit interaksi")}>
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => setDeleteId(i.id)}
-                            aria-label="Hapus interaksi"
+                            aria-label={tr("Hapus interaksi")}
                             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -281,9 +290,11 @@ export function ManageInteractionsPage() {
 
             <div className="flex flex-col gap-2 border-t border-border px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-secondary-text">
-                Menampilkan {rangeStart.toLocaleString("id-ID")}–
-                {rangeEnd.toLocaleString("id-ID")} dari{" "}
-                {total.toLocaleString("id-ID")} interaksi
+                {tr("Menampilkan {start}–{end} dari {total} interaksi", {
+                  start: rangeStart.toLocaleString(locale),
+                  end: rangeEnd.toLocaleString(locale),
+                  total: total.toLocaleString(locale),
+                })}
               </p>
               <div className="flex items-center gap-2">
                 <Button
@@ -293,7 +304,7 @@ export function ManageInteractionsPage() {
                   disabled={page <= 1 || loading}
                 >
                   <ChevronLeft className="mr-1 h-3.5 w-3.5" />
-                  Sebelumnya
+                  {tr("Sebelumnya")}
                 </Button>
                 <span className="text-xs text-secondary-text">
                   {page} / {totalPages}
@@ -306,7 +317,7 @@ export function ManageInteractionsPage() {
                   }
                   disabled={page >= totalPages || loading}
                 >
-                  Berikutnya
+                  {tr("Berikutnya")}
                   <ChevronRight className="ml-1 h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -315,46 +326,46 @@ export function ManageInteractionsPage() {
         )}
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen} title={form.id ? "Edit Interaksi" : "Tambah Interaksi"}>
+      <Dialog open={open} onOpenChange={setOpen} title={form.id ? tr("Edit Interaksi") : tr("Tambah Interaksi")}>
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="a">Obat A</Label>
-              <Input id="a" value={form.medicationA || ""} onChange={(e) => setForm({ ...form, medicationA: e.target.value })} placeholder="Nama obat A" />
+              <Label htmlFor="a">{tr("Obat A")}</Label>
+              <Input id="a" value={form.medicationA || ""} onChange={(e) => setForm({ ...form, medicationA: e.target.value })} placeholder={tr("Nama obat A")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="b">Obat B</Label>
-              <Input id="b" value={form.medicationB || ""} onChange={(e) => setForm({ ...form, medicationB: e.target.value })} placeholder="Nama obat B" />
+              <Label htmlFor="b">{tr("Obat B")}</Label>
+              <Input id="b" value={form.medicationB || ""} onChange={(e) => setForm({ ...form, medicationB: e.target.value })} placeholder={tr("Nama obat B")} />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="sev">Severity</Label>
+            <Label htmlFor="sev">{tr("Severity")}</Label>
             <select
               id="sev"
               value={form.severity || "ringan"}
               onChange={(e) => setForm({ ...form, severity: e.target.value as Interaction["severity"] })}
               className="block h-10 w-full rounded-lg border border-input bg-surface px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <option value="ringan">Ringan</option>
-              <option value="sedang">Sedang</option>
-              <option value="berat">Berat</option>
-              <option value="tidak diketahui">Tidak diketahui</option>
+              <option value="ringan">{tr("Ringan")}</option>
+              <option value="sedang">{tr("Sedang")}</option>
+              <option value="berat">{tr("Berat")}</option>
+              <option value="tidak diketahui">{tr("Tidak diketahui")}</option>
             </select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="desc">Deskripsi</Label>
-            <Textarea id="desc" value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Deskripsi interaksi..." />
+            <Label htmlFor="desc">{tr("Deskripsi")}</Label>
+            <Textarea id="desc" value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder={tr("Deskripsi interaksi...")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="rec">Rekomendasi</Label>
-            <Textarea id="rec" value={form.recommendation || ""} onChange={(e) => setForm({ ...form, recommendation: e.target.value })} placeholder="Rekomendasi penanganan..." />
+            <Label htmlFor="rec">{tr("Rekomendasi")}</Label>
+            <Textarea id="rec" value={form.recommendation || ""} onChange={(e) => setForm({ ...form, recommendation: e.target.value })} placeholder={tr("Rekomendasi penanganan...")} />
           </div>
           <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Batal
+              {tr("Batal")}
             </Button>
             <Button onClick={save} disabled={saving || !form.medicationA?.trim() || !form.medicationB?.trim()}>
-              {saving ? "Menyimpan..." : "Simpan"}
+              {saving ? tr("Menyimpan...") : tr("Simpan")}
             </Button>
           </div>
         </div>
@@ -363,8 +374,8 @@ export function ManageInteractionsPage() {
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(o) => !o && setDeleteId(null)}
-        title="Hapus interaksi ini?"
-        description="Data interaksi akan dihapus permanen dari database."
+        title={tr("Hapus interaksi ini?")}
+        description={tr("Data interaksi akan dihapus permanen dari database.")}
         onConfirm={() => {
           if (deleteId) {
             void hapus(deleteId);

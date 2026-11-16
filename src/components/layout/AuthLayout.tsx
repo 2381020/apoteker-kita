@@ -1,8 +1,11 @@
 ﻿import { Link, Outlet } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { SkipLink } from "@/components/shared/skip-link";
+import { useLanguage } from "@/lib/i18n";
 
 export function AuthLayout() {
+  const { t } = useLanguage();
+
   return (
     <div className="auth-background relative isolate min-h-dvh w-full overflow-x-clip bg-background">
       <SkipLink />
@@ -24,7 +27,7 @@ export function AuthLayout() {
             className="mb-4 inline-flex min-h-11 items-center gap-2 rounded-lg px-1 text-sm font-medium text-white/90 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            Kembali ke Beranda
+            {t("auth_back_home")}
           </Link>
 
           <Outlet />

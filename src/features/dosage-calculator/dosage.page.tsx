@@ -20,6 +20,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { MedicalDisclaimer } from "@/components/shared/medical-disclaimer";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface DosisInput {
   beratBadan: string;
@@ -152,6 +153,7 @@ function hitungKonversiSirup(
 }
 
 export function DosisPage() {
+  const { lang, tr } = useLanguage();
   const [data, setData] = useState<DosisInput>({
     beratBadan: "",
     usia: "",
@@ -232,11 +234,11 @@ export function DosisPage() {
             ? "referensi_tidak_tersedia"
             : "terverifikasi";
 
-      const catatan = info.catatan
-        ? `${info.catatan}. `
-        : usiaHari < 29
+      const catatan =
+        info.catatan ??
+        (usiaHari < 29
           ? "Berat badan neonatus: konsultasikan dengan dokter sebelum memberikan dosis"
-          : undefined;
+          : undefined);
 
       setResult({
         perDosis,
@@ -315,7 +317,7 @@ export function DosisPage() {
               onChange={(e) => set(key, e.target.value)}
               className="w-full rounded-md border border-input px-3 py-2 text-sm text-main-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <option value="">Pilih...</option>
+              <option value="">{tr("Pilih...")}</option>
               {optionElemen}
             </select>
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-secondary-text">
@@ -359,7 +361,7 @@ export function DosisPage() {
       <div className="space-y-2">
         <Label htmlFor="usia">
           <span className="flex items-center gap-1.5">
-            <User className="h-4 w-4 text-primary" /> Usia
+            <User className="h-4 w-4 text-primary" /> {tr("Usia")}
           </span>
         </Label>
         <div className="flex items-center gap-2">
@@ -370,7 +372,7 @@ export function DosisPage() {
             step="any"
             value={data.usia}
             onChange={(e) => set("usia", e.target.value)}
-            placeholder="Contoh: 30"
+            placeholder={tr("Contoh: 30")}
             className="h-10 flex-1"
           />
           <select
@@ -381,17 +383,23 @@ export function DosisPage() {
             }
             className="h-10 shrink-0 rounded-md border border-input bg-surface px-3 text-sm text-main-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <option value="tahun">Tahun</option>
-            <option value="bulan">Bulan</option>
-            <option value="hari">Hari</option>
+            <option value="tahun">{tr("Tahun")}</option>
+            <option value="bulan">{tr("Bulan")}</option>
+            <option value="hari">{tr("Hari")}</option>
           </select>
         </div>
         <p className="text-xs text-secondary-text">
           {usiaValid && usiaInfo
-            ? `≈ ${Math.round(usiaHari).toLocaleString("id-ID")} hari • Kelompok ${usiaInfo.kelompok}${
-                usiaInfo.catatan ? ` • ${usiaInfo.catatan}` : ""
-              }`
-            : "Masukkan usia dalam hari, bulan, atau tahun."}
+            ? tr("≈ {days} hari • Kelompok {group}{note}", {
+                days: Math.round(usiaHari).toLocaleString(
+                  lang === "en" ? "en-US" : "id-ID"
+                ),
+                group: tr(usiaInfo.kelompok),
+                note: usiaInfo.catatan
+                  ? ` • ${tr(usiaInfo.catatan)}`
+                  : "",
+              })
+            : tr("Masukkan usia dalam hari, bulan, atau tahun.")}
         </p>
       </div>
     );
@@ -403,7 +411,7 @@ export function DosisPage() {
       <div className="space-y-2">
         <Label htmlFor="obat">
           <span className="flex items-center gap-1.5">
-            <BookOpen className="h-4 w-4 text-primary" /> Obat
+            <BookOpen className="h-4 w-4 text-primary" /> {tr("Obat")}
           </span>
         </Label>
         <div className="relative">
@@ -412,7 +420,7 @@ export function DosisPage() {
             onChange={(e) => set("obatNama", e.target.value)}
             className="w-full rounded-md border border-input px-3 py-2 text-sm text-main-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <option value="">Pilih obat...</option>
+            <option value="">{tr("Pilih obat...")}</option>
             <option value="paracetamol">Paracetamol 500 mg</option>
             <option value="ibuprofen">Ibuprofen 400 mg</option>
             <option value="amoxicillin">Amoxicillin 250 mg</option>
@@ -428,24 +436,26 @@ export function DosisPage() {
   return (
     <div className="animate-fade-in mx-auto w-full max-w-2xl space-y-6">
       <PageHeader
-        title="Kalkulator Dosis Obat"
-        description="Hitung dosis obat yang tepat berdasarkan berat badan, usia, dan metode perhitungan"
+        title={tr("Kalkulator Dosis Obat")}
+        description={tr(
+          "Hitung dosis obat yang tepat berdasarkan berat badan, usia, dan metode perhitungan"
+        )}
       />
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-4 space-y-4 sm:p-6">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-main-text uppercase tracking-wider">
-            Data Pasien
+            {tr("Data Pasien")}
           </h2>
 
           <div className="grid gap-4">
             {field(
               "beratBadan",
-              "Berat Badan",
+              tr("Berat Badan"),
               "kg",
               Scale,
-              "Contoh: 60",
-              "Wajib diisi untuk menghitung dosis",
+              tr("Contoh: 60"),
+              tr("Wajib diisi untuk menghitung dosis"),
             )}
 
             {renderUsiaInput()}
@@ -453,7 +463,7 @@ export function DosisPage() {
             <div className="space-y-2">
               <Label htmlFor="dosisPerKg">
                 <span className="flex items-center gap-1.5">
-                  <Syringe className="h-4 w-4 text-primary" /> Dosis per kg (mg)
+                  <Syringe className="h-4 w-4 text-primary" /> {tr("Dosis per kg (mg)")}
                 </span>
               </Label>
               <div className="relative">
@@ -464,7 +474,7 @@ export function DosisPage() {
                   step="any"
                   value={data.dosisPerKg}
                   onChange={(e) => set("dosisPerKg", e.target.value)}
-                  placeholder="Contoh: 10"
+                  placeholder={tr("Contoh: 10")}
                   className="pr-12"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-secondary-text">
@@ -472,14 +482,14 @@ export function DosisPage() {
                 </span>
               </div>
               <p className="text-xs text-secondary-text">
-                Rumus: BB (kg) × Dosis per kg = Dosis per pemberian (mg)
+                {tr("Rumus: BB (kg) × Dosis per kg = Dosis per pemberian (mg)")}
               </p>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="frekuensi">
                 <span className="flex items-center gap-1.5">
-                  <CalendarClock className="h-4 w-4 text-primary" /> Frekuensi
+                  <CalendarClock className="h-4 w-4 text-primary" /> {tr("Frekuensi")}
                 </span>
               </Label>
               <div className="relative">
@@ -495,11 +505,11 @@ export function DosisPage() {
                   className="pr-12"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-secondary-text">
-                  x/hari
+                  {tr("x/hari")}
                 </span>
               </div>
               <p className="text-xs text-secondary-text">
-                Contoh: 3 kali sehari = setiap 8 jam
+                {tr("Contoh: 3 kali sehari = setiap 8 jam")}
               </p>
             </div>
           </div>
@@ -514,23 +524,24 @@ export function DosisPage() {
             size="lg"
             className="w-full"
           >
-            {loading ? "Menghitung..." : "Hitung Dosis"}
+            {loading ? tr("Menghitung...") : tr("Hitung Dosis")}
           </Button>
 
           {!canCalculate && (berat > 0 || data.usia.trim()) && (
             <p className="mt-2 text-sm text-destructive text-center">
-              {pesan ||
-                (data.usia.trim() && !usiaValid
-                  ? "Usia tidak valid"
-                  : "Masukkan berat badan, usia, dan frekuensi yang valid")}
+              {pesan
+                ? tr(pesan)
+                : data.usia.trim() && !usiaValid
+                  ? tr("Usia tidak valid")
+                  : tr("Masukkan berat badan, usia, dan frekuensi yang valid")}
             </p>
           )}
 
           {berat > 0 && usiaValid && usiaInfo && (
             <p className="mt-2 text-xs text-secondary-text text-center">
-              Kelompok usia:{" "}
+              {tr("Kelompok usia:")}{" "}
               <span className="font-medium text-primary">
-                {usiaInfo.kelompok}
+                {tr(usiaInfo.kelompok)}
               </span>
             </p>
           )}
@@ -538,7 +549,7 @@ export function DosisPage() {
 
         <Card className="h-full p-4 space-y-4 sm:p-6">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-main-text uppercase tracking-wider">
-            Hasil Perhitungan
+            {tr("Hasil Perhitungan")}
           </h2>
 
           {result ? (
@@ -546,50 +557,50 @@ export function DosisPage() {
               {/* Info Pasien */}
               <div className="rounded-xl bg-muted p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                  Pasien
-                </p>
-                <p className="mt-1 font-medium text-main-text">
-                  {user?.fullName || "Anonim"} • {result.usiaKelompok}
-                </p>
+                   {tr("Pasien")}
+                 </p>
+                 <p className="mt-1 font-medium text-main-text">
+                   {user?.fullName || tr("Anonim")} • {tr(result.usiaKelompok)}
+                 </p>
               </div>
 
               {/* Metode */}
               <div className="rounded-xl bg-primary-soft p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                  Metode
-                </p>
-                <p className="mt-1 text-sm text-main-text">{result.metode}</p>
+                   {tr("Metode")}
+                 </p>
+                 <p className="mt-1 text-sm text-main-text">{tr(result.metode)}</p>
               </div>
 
               {/* Rumus */}
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                  Rumus
-                </p>
-                <code className="mt-1 block whitespace-pre bg-muted p-2 rounded text-xs">
-                  {berat} kg × {dosisPerKg} mg/kg ={" "}
-                  {result.perDosis.toLocaleString("id-ID")} mg
-                </code>
+                   {tr("Rumus")}
+                 </p>
+                 <code className="mt-1 block whitespace-pre bg-muted p-2 rounded text-xs">
+                   {berat} kg × {dosisPerKg} mg/kg ={" "}
+                   {result.perDosis.toLocaleString(lang === "en" ? "en-US" : "id-ID")} mg
+                 </code>
               </div>
 
               {/* Hasil Utama */}
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="rounded-xl bg-primary-soft/60 p-5 text-center">
                   <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                    Dosis per kali
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-main-text">
-                    {result.perDosis.toLocaleString("id-ID")} mg
-                  </p>
+                     {tr("Dosis per kali")}
+                   </p>
+                   <p className="mt-2 text-3xl font-bold text-main-text">
+                     {result.perDosis.toLocaleString(lang === "en" ? "en-US" : "id-ID")} mg
+                   </p>
                 </div>
 
                 <div className="rounded-xl border border-border p-5 text-center">
                   <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                    Total per hari
-                  </p>
-                  <p className="mt-1 text-2xl font-bold text-main-text">
-                    {result.totalHarian.toLocaleString("id-ID")} mg/hari
-                  </p>
+                     {tr("Total per hari")}
+                   </p>
+                   <p className="mt-1 text-2xl font-bold text-main-text">
+                     {result.totalHarian.toLocaleString(lang === "en" ? "en-US" : "id-ID")} {lang === "en" ? "mg/day" : "mg/hari"}
+                   </p>
                 </div>
               </div>
 
@@ -598,12 +609,14 @@ export function DosisPage() {
                 result.konversiTablet > 0 && (
                   <div className="rounded-xl bg-muted p-4">
                     <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                      Konversi Tablet
-                    </p>
-                    <p className="mt-1 text-sm text-main-text">
-                      {result.konversiTablet.toFixed(1)} tablet(s) dari{" "}
-                      {dosisPerKg} mg
-                    </p>
+                       {tr("Konversi Tablet")}
+                     </p>
+                     <p className="mt-1 text-sm text-main-text">
+                       {tr("{value} tablet(s) dari {dose} mg", {
+                         value: result.konversiTablet.toFixed(1),
+                         dose: dosisPerKg,
+                       })}
+                     </p>
                   </div>
                 )}
 
@@ -611,12 +624,14 @@ export function DosisPage() {
                 result.konversiKapsul > 0 && (
                   <div className="rounded-xl bg-muted p-4">
                     <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                      Konversi Kapsul
-                    </p>
-                    <p className="mt-1 text-sm text-main-text">
-                      {result.konversiKapsul.toFixed(1)} kapsul(s) dari{" "}
-                      {dosisPerKg} mg
-                    </p>
+                       {tr("Konversi Kapsul")}
+                     </p>
+                     <p className="mt-1 text-sm text-main-text">
+                       {tr("{value} kapsul(s) dari {dose} mg", {
+                         value: result.konversiKapsul.toFixed(1),
+                         dose: dosisPerKg,
+                       })}
+                     </p>
                   </div>
                 )}
 
@@ -624,11 +639,14 @@ export function DosisPage() {
                 result.konversiSirup > 0 && (
                   <div className="rounded-xl bg-muted p-4">
                     <p className="text-xs font-medium uppercase tracking-wide text-secondary-text">
-                      Konversi Sirup
-                    </p>
-                    <p className="mt-1 text-sm text-main-text">
-                      {result.konversiSirup.toFixed(1)} mL dari {dosisPerKg} mg
-                    </p>
+                       {tr("Konversi Sirup")}
+                     </p>
+                     <p className="mt-1 text-sm text-main-text">
+                       {tr("{value} mL dari {dose} mg", {
+                         value: result.konversiSirup.toFixed(1),
+                         dose: dosisPerKg,
+                       })}
+                     </p>
                   </div>
                 )}
 
@@ -646,16 +664,16 @@ export function DosisPage() {
               >
                 <p className="text-xs font-medium uppercase tracking-wide">
                   {result.statusValidasi === "terverifikasi"
-                    ? "Sudah terverifikasi referensi"
+                    ? tr("Sudah terverifikasi referensi")
                     : result.statusValidasi === "perhatian"
-                      ? "Perhatikan: kelompok usia Lansia"
+                      ? tr("Perhatikan: kelompok usia Lansia")
                       : result.statusValidasi === "melebihi_batas"
-                        ? "⚠️ Melebihi batas dosis referensi"
-                        : "Referensi dosis tidak tersedia untuk kelompok ini"}
+                        ? tr("⚠️ Melebihi batas dosis referensi")
+                        : tr("Referensi dosis tidak tersedia untuk kelompok ini")}
                 </p>
                 {result.catatan && (
                   <p className="mt-1 text-xs text-secondary-text">
-                    {result.catatan}
+                    {tr(result.catatan)}
                   </p>
                 )}
               </div>
@@ -666,7 +684,7 @@ export function DosisPage() {
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-3 px-3 text-center text-secondary-text">
               <Calculator className="h-12 w-12 opacity-50" />
-              <p>Masukkan data pasien terlebih dahulu, lalu klik &quot;Hitung Dosis&quot;.</p>
+              <p>{tr('Masukkan data pasien terlebih dahulu, lalu klik "Hitung Dosis".')}</p>
             </div>
           )}
         </Card>

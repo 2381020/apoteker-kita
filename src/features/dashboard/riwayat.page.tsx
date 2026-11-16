@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useLanguage } from "@/lib/i18n";
 
 const statusMeta: Record<
   string,
@@ -20,6 +21,7 @@ const statusMeta: Record<
 
 export function RiwayatPage() {
   const { user } = useAuth();
+  const { lang, tr } = useLanguage();
   const [history, setHistory] = useState<ConsumptionHistory[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,23 +54,28 @@ export function RiwayatPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Riwayat Konsumsi"
-        description={`Catatan obat yang telah Anda konsumsi. ${ditempuh} dosis berhasil ditempuh.`}
+        title={tr("Riwayat Konsumsi")}
+        description={tr(
+          "Catatan obat yang telah Anda konsumsi. {count} dosis berhasil ditempuh.",
+          { count: ditempuh },
+        )}
         icon={History}
       />
 
       <Card className="overflow-hidden">
         <div className="border-b border-border px-4 py-4 sm:px-5">
           <h2 className="text-base font-semibold text-main-text">
-            Semua Riwayat
+            {tr("Semua Riwayat")}
           </h2>
         </div>
         {history.length === 0 ? (
           <div className="p-6">
             <EmptyState
               icon={CheckCircle2}
-              title="Belum ada riwayat konsumsi"
-              description="Catatan obat yang telah Anda konsumsi akan muncul di sini."
+              title={tr("Belum ada riwayat konsumsi")}
+              description={tr(
+                "Catatan obat yang telah Anda konsumsi akan muncul di sini.",
+              )}
             />
           </div>
         ) : (
@@ -86,17 +93,20 @@ export function RiwayatPage() {
                     </p>
                     <p className="text-xs text-secondary-text">
                       {h.dosage} •{" "}
-                      {new Date(h.takenAt).toLocaleString("id-ID", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {new Date(h.takenAt).toLocaleString(
+                        lang === "en" ? "en-US" : "id-ID",
+                        {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
                     </p>
                   </div>
                   <Badge variant={meta.variant} className="shrink-0">
-                    {meta.label}
+                    {tr(meta.label)}
                   </Badge>
                 </li>
               );

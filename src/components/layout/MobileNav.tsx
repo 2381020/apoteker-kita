@@ -1,26 +1,20 @@
 ﻿import { useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Activity,
-  BellRing,
-  BookOpen,
-  Building2,
-  Calculator,
   ChevronRight,
-  History,
-  LayoutDashboard,
   LogIn,
   LogOut,
-  MessageCircle,
-  Pill,
-  Settings,
-  ShieldCheck,
-  User,
   UserPlus,
 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
-import { SIDEBAR_ADMIN } from "@/lib/nav-config";
+import { useLanguage } from "@/lib/i18n";
+import {
+  PUBLIC_NAV,
+  SIDEBAR_ADMIN,
+  SIDEBAR_AKUN,
+  SIDEBAR_UTAMA,
+} from "@/lib/nav-config";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -30,6 +24,7 @@ interface MobileNavProps {
 
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const { t, navLabel } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -39,37 +34,17 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
   // NAVIGATION ITEMS
   // =====================================================
 
-  const layanan = [
-    { href: "/obat", label: "Informasi Obat", icon: Pill },
-    { href: "/interaksi", label: "Cek Interaksi", icon: Activity },
-    { href: "/dosis", label: "Kalkulator Dosis", icon: Calculator },
-    { href: "/panduan", label: "Panduan Obat", icon: BookOpen },
-    { href: "/apotek", label: "Cari Apotek", icon: Building2 },
-    { href: "/tanya", label: "Tanya Apoteker", icon: MessageCircle },
-  ];
-
-  const akun = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/pengingat", label: "Pengingat Obat", icon: BellRing },
-    { href: "/riwayat", label: "Riwayat Konsumsi", icon: History },
-    { href: "/profil", label: "Profil Saya", icon: User },
-    { href: "/pengaturan", label: "Pengaturan", icon: Settings },
-  ];
+  const akun = [...SIDEBAR_UTAMA, ...SIDEBAR_AKUN];
 
   const groups = isAuthenticated
     ? [
-        { title: "Layanan", items: layanan },
         ...(isAdmin
-          ? [
-              {
-                title: "Admin",
-                items: SIDEBAR_ADMIN,
-              },
-            ]
+          ? [{ title: t("mobile_admin"), items: SIDEBAR_ADMIN }]
           : []),
-        { title: "Akun", items: akun },
+        { title: t("mobile_account"), items: akun },
+        { title: t("sidebar_menu"), items: PUBLIC_NAV },
       ]
-    : [{ title: "Layanan", items: layanan }];
+    : [{ title: t("sidebar_menu"), items: PUBLIC_NAV }];
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
@@ -83,6 +58,14 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
       location.pathname.startsWith(href + "/")
     );
   };
+
+  const initials =
+    user?.fullName
+      ?.split(" ")
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() ?? "U";
 
   const handleLogout = () => {
     onClose();
@@ -189,6 +172,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
           "fixed left-0 right-0 z-50",
           "flex flex-col",
           "overflow-hidden",
+          "rounded-b-2xl",
 
           "border-b border-border",
           "bg-surface shadow-xl",
@@ -207,6 +191,43 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
         }}
         inert={!open}
       >
+        {/* =========================================
+            PROFIL PENGGUNA
+        ========================================= */}
+
+        {isAuthenticated && (
+          <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-4">
+            <span
+              className={cn(
+                "flex h-11 w-11 shrink-0 items-center justify-center",
+                "rounded-full bg-primary-soft text-sm font-semibold text-primary"
+              )}
+            >
+              {initials}
+            </span>
+
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-main-text">
+                {user?.fullName ?? "-"}
+              </p>
+              <p className="truncate text-xs text-secondary-text">
+                {user?.email ?? "-"}
+              </p>
+            </div>
+
+            <span
+              className={cn(
+                "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                isAdmin
+                  ? "bg-[#fff2bf] text-[#8a6d1a]"
+                  : "bg-primary-soft text-primary"
+              )}
+            >
+              {isAdmin ? t("auth_demo_admin") : t("auth_demo_patient")}
+            </span>
+          </div>
+        )}
+
         {/* =========================================
             NAVIGATION LINKS
         ========================================= */}
@@ -244,7 +265,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                           "text-[15px] font-medium",
                           "transition-colors duration-200",
                           active
-                            ? "bg-[#fff2bf] text-main-text"
+                            ? "bg-[#e6f4f1] text-[#0b6d66]"
                             : "text-main-text hover:bg-accent hover:text-brand",
                         )}
                       >
@@ -252,7 +273,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                           className={cn(
                             "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
                             active
-                              ? "bg-brand text-[#263238]"
+                              ? "bg-[#078e83] text-white"
                               : "bg-primary-soft text-primary",
                           )}
                         >
@@ -260,13 +281,13 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                         </span>
 
                         <span className="min-w-0 flex-1 truncate">
-                          {item.label}
+                          {navLabel(item.href, item.label)}
                         </span>
 
                         <ChevronRight
                           className={cn(
                             "h-4 w-4 shrink-0",
-                            active ? "text-main-text/60" : "text-secondary-text/60",
+                            active ? "text-[#078e83]" : "text-secondary-text/60",
                           )}
                         />
                       </Link>
@@ -284,25 +305,19 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
 
         <div className="shrink-0 border-t border-border bg-surface px-4 py-3 pb-[calc(0.75rem+var(--safe-bottom))]">
           {isAuthenticated ? (
-            <div className="flex items-center gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-main-text">
-                  {user?.fullName}
-                </p>
-                <p className="truncate text-xs text-secondary-text">
-                  {user?.email}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-destructive/30 px-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-              >
-                <LogOut className="h-4 w-4" />
-                Keluar
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className={cn(
+                "inline-flex min-h-11 w-full items-center justify-center gap-2",
+                "rounded-xl border border-destructive/30 px-3",
+                "text-sm font-semibold text-destructive",
+                "transition-colors hover:bg-destructive/10"
+              )}
+            >
+              <LogOut className="h-4 w-4" />
+              {t("navbar_logout")}
+            </button>
           ) : (
             <div className="grid grid-cols-2 gap-2">
               <Link
@@ -311,7 +326,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold text-main-text transition-colors hover:bg-accent"
               >
                 <LogIn className="h-4 w-4" />
-                Masuk
+                {t("navbar_login")}
               </Link>
 
               <Link
@@ -320,7 +335,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand px-3 text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand-hover"
               >
                 <UserPlus className="h-4 w-4" />
-                Daftar
+                {t("navbar_register")}
               </Link>
             </div>
           )}

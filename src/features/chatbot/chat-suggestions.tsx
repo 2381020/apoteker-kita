@@ -1,5 +1,6 @@
 import { FOLLOW_UP_SUGGESTIONS, type ChatMessage } from "@/lib/chatbot";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface ChatSuggestionsProps {
   messages: ChatMessage[];
@@ -16,6 +17,8 @@ export function ChatSuggestions({
   limit = 4,
   className,
 }: ChatSuggestionsProps) {
+  const { tr } = useLanguage();
+
   if (messages.length === 0) return null;
 
   const asked = new Set(
@@ -33,7 +36,7 @@ export function ChatSuggestions({
   return (
     <div
       className={cn("flex gap-2 overflow-x-auto pb-1", className)}
-      aria-label="Pertanyaan lanjutan"
+      aria-label={tr("Pertanyaan lanjutan")}
     >
       {suggestions.map((suggestion) => (
         <button

@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { EN_TEXT } from "./i18n-content";
+
 export type Language = "id" | "en";
 
 export const dict = {
@@ -34,8 +36,18 @@ export const dict = {
     footer_tagline: "Platform informasi obat digital Indonesia untuk memahami obat, memeriksa interaksi, menghitung dosis, dan mengelola jadwal minum obat.",
     footer_features_heading: "Fitur",
     footer_quicklinks_heading: "Cepat",
+    footer_follow_heading: "Ikuti Kami",
     footer_contact_heading: "Kontak",
-    footer_copyright: "&copy; {tahun} ApotekerKita",
+    footer_hours: "Senin–Jumat, 08.00–17.00 WIB",
+    footer_copyright: "© {tahun} ApotekerKita",
+    footer_link_medications: "Informasi Obat",
+    footer_link_interactions: "Cek Interaksi",
+    footer_link_dosage: "Kalkulator Dosis",
+    footer_link_guides: "Panduan",
+    footer_link_pharmacy: "Cari Apotek",
+
+    sidebar_menu: "Menu",
+    language_switch_aria: "Pilih bahasa",
 
     auth_login: "Masuk",
     auth_register: "Daftar",
@@ -89,6 +101,10 @@ export const dict = {
     guides_placeholder: "Cari judul panduan...",
     pharmacy_title: "Cari Apotek",
     pharmacy_search_placeholder: "Masukkan nama apotek...",
+    pharmacy_status_open: "Buka",
+    pharmacy_status_closed: "Tutup",
+    pharmacy_operating: "Sedang beroperasi",
+    pharmacy_not_operating: "Tidak beroperasi",
     chatbot_title: "Asisten Apoteker Virtual",
     chatbot_welcome: "Halo! Ada yang bisa dibantu?",
     chatbot_placeholder: "Ketik pertanyaan Anda...",
@@ -138,8 +154,18 @@ export const dict = {
     footer_tagline: "Digital medication information platform in Indonesia for understanding medications, checking interactions, calculating dosage, and managing medication schedules.",
     footer_features_heading: "Features",
     footer_quicklinks_heading: "Quick Links",
+    footer_follow_heading: "Follow Us",
     footer_contact_heading: "Contact",
-    footer_copyright: "&copy; {year} ApotekerKita",
+    footer_hours: "Monday–Friday, 08.00–17.00 WIB",
+    footer_copyright: "© {year} ApotekerKita",
+    footer_link_medications: "Medication Info",
+    footer_link_interactions: "Check Interactions",
+    footer_link_dosage: "Dosage Calculator",
+    footer_link_guides: "Guides",
+    footer_link_pharmacy: "Find Pharmacy",
+
+    sidebar_menu: "Menu",
+    language_switch_aria: "Select language",
 
     auth_login: "Login",
     auth_register: "Register",
@@ -193,6 +219,10 @@ export const dict = {
     guides_placeholder: "Search guide title...",
     pharmacy_title: "Find Pharmacy",
     pharmacy_search_placeholder: "Enter pharmacy name...",
+    pharmacy_status_open: "Open",
+    pharmacy_status_closed: "Closed",
+    pharmacy_operating: "Currently operating",
+    pharmacy_not_operating: "Not operating",
     chatbot_title: "Virtual Pharmacist Assistant",
     chatbot_welcome: "Hello! How can I help you?",
     chatbot_placeholder: "Type your question...",
@@ -238,6 +268,13 @@ const NAV_LABELS: Record<Language, Record<string, string>> = {
     "/riwayat": "Riwayat Konsumsi",
     "/profil": "Profil Saya",
     "/pengaturan": "Pengaturan",
+    "/admin": "Dashboard Admin",
+    "/admin/obat": "Kelola Obat",
+    "/admin/interaksi": "Kelola Interaksi",
+    "/admin/import": "Import Interaksi",
+    "/admin/panduan": "Kelola Panduan",
+    "/admin/apotek": "Kelola Apotek",
+    "/admin/pengguna": "Kelola Pengguna",
   },
   en: {
     "/": "Home",
@@ -252,6 +289,13 @@ const NAV_LABELS: Record<Language, Record<string, string>> = {
     "/riwayat": "History",
     "/profil": "Profile",
     "/pengaturan": "Settings",
+    "/admin": "Admin Dashboard",
+    "/admin/obat": "Manage Medications",
+    "/admin/interaksi": "Manage Interactions",
+    "/admin/import": "Import Interactions",
+    "/admin/panduan": "Manage Guides",
+    "/admin/apotek": "Manage Pharmacies",
+    "/admin/pengguna": "Manage Users",
   },
 };
 
@@ -260,6 +304,7 @@ export interface LanguageContextValue {
   setLang: (lang: Language) => void;
   toggleLang: () => void;
   t: (key: keyof typeof dict.id, vars?: Record<string, string | number>) => string;
+  tr: (text: string, vars?: Record<string, string | number>) => string;
   navLabel: (href: string, fallback?: string) => string;
 }
 
@@ -316,6 +361,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [lang]
   );
 
+  const tr = useCallback(
+    (text: string, vars?: Record<string, string | number>) => {
+      const template = lang === "en" ? EN_TEXT[text] ?? text : text;
+      return interpolate(template, vars);
+    },
+    [lang]
+  );
+
   const navLabel = useCallback(
     (href: string, fallback?: string) =>
       NAV_LABELS[lang][href] ?? fallback ?? "",
@@ -328,9 +381,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       setLang,
       toggleLang,
       t,
+      tr,
       navLabel,
     }),
-    [lang, setLang, toggleLang, t, navLabel]
+    [lang, setLang, toggleLang, t, tr, navLabel]
   );
 
   return createElement(LanguageContext.Provider, { value }, children);

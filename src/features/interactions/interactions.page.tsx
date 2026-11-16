@@ -21,6 +21,7 @@ import { findInteraction } from "@/services/interactions.service";
 import { DrugCombobox } from "@/components/shared/drug-combobox";
 import type { Interaction } from "@/types";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 type Severity = "ringan" | "sedang" | "berat" | "tidak diketahui";
 
@@ -97,6 +98,8 @@ function InteractionItem({
 }: {
   interaction: Interaction;
 }) {
+  const { tr } = useLanguage();
+
   const severity = isSeverity(interaction.severity)
     ? interaction.severity
     : null;
@@ -114,7 +117,9 @@ function InteractionItem({
       }
 
       if (interaction.originalSeverity) {
-        sourceInfo += ` · Level asli: ${interaction.originalSeverity}`;
+        sourceInfo += ` · ${tr("Level asli: {level}", {
+          level: interaction.originalSeverity,
+        })}`;
       }
     }
   }
@@ -129,13 +134,13 @@ function InteractionItem({
         </h3>
 
         <Badge variant={meta?.variant ?? "secondary"}>
-          {meta?.label ?? "Belum diklasifikasikan"}
+          {meta ? tr(meta.label) : tr("Belum diklasifikasikan")}
         </Badge>
       </div>
 
       <div className="mt-4">
         <p className="text-xs font-semibold text-[#526767]">
-          Deskripsi interaksi
+          {tr("Deskripsi interaksi")}
         </p>
 
         <p className="mt-2 text-sm leading-6 text-[#607575]">
@@ -145,7 +150,7 @@ function InteractionItem({
 
       <div className="mt-4 border-l-2 border-[#15968b] pl-3">
         <p className="text-xs font-semibold text-[#526767]">
-          Rekomendasi
+          {tr("Rekomendasi")}
         </p>
 
         <p className="mt-2 text-sm leading-6 text-[#607575]">
@@ -156,7 +161,7 @@ function InteractionItem({
       {sourceInfo && (
         <p className="mt-4 flex items-center gap-2 text-xs text-[#849494]">
           <Database size={13} />
-          Sumber: {sourceInfo}
+          {tr("Sumber: {source}", { source: sourceInfo })}
         </p>
       )}
     </div>
@@ -178,29 +183,33 @@ function InteractionResults({
   maxSeverity: Severity | null;
   fromDataset: boolean;
 }) {
+  const { tr } = useLanguage();
   const hasInteractions = result.items.length > 0;
 
   const isHighRisk = maxSeverity === "berat";
   const isMediumRisk = maxSeverity === "sedang";
 
-  let statusLabel = "Tidak ditemukan";
+  let statusLabel = tr("Tidak ditemukan");
   let disclaimer = "";
   let sourceText = "";
 
   if (fromDataset) {
-    statusLabel = "Ditemukan dari dataset DDInter 2.0";
-    disclaimer =
-      "Dataset DDInter 2.0 tidak mencakup seluruh obat di Indonesia. Hasil ini merupakan informasi pendukung, bukan pengganti konsultasi medis.";
-    sourceText = "DDInter 2.0 (dataset terbuka)";
+    statusLabel = tr("Ditemukan dari dataset DDInter 2.0");
+    disclaimer = tr(
+      "Dataset DDInter 2.0 tidak mencakup seluruh obat di Indonesia. Hasil ini merupakan informasi pendukung, bukan pengganti konsultasi medis."
+    );
+    sourceText = tr("DDInter 2.0 (dataset terbuka)");
   } else if (hasInteractions) {
-    statusLabel = "Interaksi ditemukan";
-    disclaimer =
-      "Konsultasikan kombinasi obat kepada dokter atau apoteker sebelum menggunakannya.";
-    sourceText = "Basis data aplikasi";
+    statusLabel = tr("Interaksi ditemukan");
+    disclaimer = tr(
+      "Konsultasikan kombinasi obat kepada dokter atau apoteker sebelum menggunakannya."
+    );
+    sourceText = tr("Basis data aplikasi");
   } else {
-    disclaimer =
-      "Basis data tidak menemukan interaksi untuk kombinasi ini. Namun, hal tersebut bukan jaminan bahwa kombinasi obat sepenuhnya aman.";
-    sourceText = "Basis data aplikasi";
+    disclaimer = tr(
+      "Basis data tidak menemukan interaksi untuk kombinasi ini. Namun, hal tersebut bukan jaminan bahwa kombinasi obat sepenuhnya aman."
+    );
+    sourceText = tr("Basis data aplikasi");
   }
 
   return (
@@ -224,26 +233,26 @@ function InteractionResults({
 
           <div>
             <h2 className="text-base font-semibold text-[#263b3b]">
-              Hasil pemeriksaan
+              {tr("Hasil pemeriksaan")}
             </h2>
 
             <p className="mt-1 text-xs text-[#758787]">
-              Diperiksa pukul {checkedAt}
+              {tr("Diperiksa pukul {time}", { time: checkedAt })}
             </p>
           </div>
         </div>
 
         {maxSeverity ? (
           <Badge variant={severityMeta[maxSeverity].variant}>
-            {severityMeta[maxSeverity].level}
+            {tr(severityMeta[maxSeverity].level)}
           </Badge>
         ) : hasInteractions ? (
           <Badge variant="secondary">
-            Risiko belum diklasifikasikan
+            {tr("Risiko belum diklasifikasikan")}
           </Badge>
         ) : (
           <Badge variant="success">
-            Tidak ditemukan
+            {tr("Tidak ditemukan")}
           </Badge>
         )}
       </div>
@@ -262,11 +271,13 @@ function InteractionResults({
           <div className="mt-5">
             <div className="mb-2">
               <h3 className="text-sm font-semibold text-[#263b3b]">
-                Detail interaksi
+                {tr("Detail interaksi")}
               </h3>
 
               <p className="mt-1 text-xs text-[#758787]">
-                Ditemukan {result.items.length} catatan interaksi.
+                {tr("Ditemukan {count} catatan interaksi.", {
+                  count: result.items.length,
+                })}
               </p>
             </div>
 
@@ -302,11 +313,10 @@ function InteractionResults({
 
         <div className="mt-5 border-t border-[#e9eeee] pt-4">
           <p className="text-xs leading-6 text-[#849494]">
-            Hasil pemeriksaan berdasarkan data interaksi yang tersedia
-            pada aplikasi. Sumber: {sourceText}. Selalu konsultasikan
-            kombinasi obat kepada dokter atau apoteker, terutama jika
-            memiliki kondisi kesehatan tertentu atau menggunakan obat
-            lainnya.
+            {tr(
+              "Hasil pemeriksaan berdasarkan data interaksi yang tersedia pada aplikasi. Sumber: {source}. Selalu konsultasikan kombinasi obat kepada dokter atau apoteker, terutama jika memiliki kondisi kesehatan tertentu atau menggunakan obat lainnya.",
+              { source: sourceText }
+            )}
           </p>
         </div>
       </div>
@@ -319,6 +329,7 @@ function InteractionResults({
 // =====================================================
 
 export function InteraksiPage() {
+  const { lang, tr } = useLanguage();
   const [obatA, setObatA] = useState("");
   const [obatB, setObatB] = useState("");
 
@@ -375,7 +386,7 @@ export function InteraksiPage() {
       });
 
       setCheckedAt(
-        new Date().toLocaleTimeString("id-ID", {
+        new Date().toLocaleTimeString(lang === "en" ? "en-US" : "id-ID", {
           hour: "2-digit",
           minute: "2-digit",
         })
@@ -384,7 +395,7 @@ export function InteraksiPage() {
       console.error("Gagal memeriksa interaksi obat:", err);
 
       setError(
-        "Terjadi kesalahan saat memeriksa interaksi obat. Silakan coba kembali."
+        tr("Terjadi kesalahan saat memeriksa interaksi obat. Silakan coba kembali.")
       );
     } finally {
       setLoading(false);
@@ -418,11 +429,11 @@ export function InteraksiPage() {
 
           <div>
             <h1 className="text-base font-semibold text-[#263b3b]">
-              Periksa kombinasi obat
+              {tr("Periksa kombinasi obat")}
             </h1>
 
             <p className="mt-1 text-sm text-[#718282]">
-              Pilih dua obat yang ingin diperiksa.
+              {tr("Pilih dua obat yang ingin diperiksa.")}
             </p>
           </div>
         </div>
@@ -441,11 +452,11 @@ export function InteraksiPage() {
                   htmlFor="obatA"
                   className="text-sm font-semibold text-[#263b3b]"
                 >
-                  Obat pertama
+                  {tr("Obat pertama")}
                 </Label>
 
                 <span className="text-sm text-[#718282]">
-                  Obat A
+                  {tr("Obat A")}
                 </span>
               </div>
 
@@ -456,7 +467,7 @@ export function InteraksiPage() {
                 onChange={(value) =>
                   handleMedicationChange(setObatA, value)
                 }
-                placeholder="Cari nama obat pertama..."
+                placeholder={tr("Cari nama obat pertama...")}
               />
             </div>
 
@@ -490,11 +501,11 @@ export function InteraksiPage() {
                   htmlFor="obatB"
                   className="text-sm font-semibold text-[#263b3b]"
                 >
-                  Obat kedua
+                  {tr("Obat kedua")}
                 </Label>
 
                 <span className="text-sm text-[#718282]">
-                  Obat B
+                  {tr("Obat B")}
                 </span>
               </div>
 
@@ -505,7 +516,7 @@ export function InteraksiPage() {
                 onChange={(value) =>
                   handleMedicationChange(setObatB, value)
                 }
-                placeholder="Cari nama obat kedua..."
+                placeholder={tr("Cari nama obat kedua...")}
               />
             </div>
           </div>
@@ -549,12 +560,12 @@ export function InteraksiPage() {
                     size={18}
                     className="mr-2 animate-spin"
                   />
-                  Memeriksa...
+                  {tr("Memeriksa...")}
                 </>
               ) : (
                 <>
                   <SearchCheck size={18} className="mr-2" />
-                  Periksa Interaksi Obat
+                  {tr("Periksa Interaksi Obat")}
                 </>
               )}
             </Button>
@@ -568,7 +579,7 @@ export function InteraksiPage() {
                 className="h-[54px] rounded-md border-[#dce5e5] px-5 text-[#526767] shadow-none hover:bg-[#f5f8f8]"
               >
                 <Trash2 size={16} className="mr-2" />
-                Reset
+                {tr("Reset")}
               </Button>
             )}
           </div>
@@ -582,9 +593,9 @@ export function InteraksiPage() {
             />
 
             <p className="text-sm leading-7 text-[#718282]">
-              Pastikan nama obat yang dipilih sudah benar. Pemeriksaan
-              ini menggunakan data interaksi yang tersedia dan tidak
-              menggantikan konsultasi dengan tenaga kesehatan.
+              {tr(
+                "Pastikan nama obat yang dipilih sudah benar. Pemeriksaan ini menggunakan data interaksi yang tersedia dan tidak menggantikan konsultasi dengan tenaga kesehatan."
+              )}
             </p>
           </div>
         </div>

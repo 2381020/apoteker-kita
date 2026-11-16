@@ -9,6 +9,7 @@ import { SUGGESTIONS, type ChatSource } from "@/lib/chatbot";
 import type { ChatMessage } from "@/lib/chatbot";
 import { useChat } from "@/features/chatbot/chat-provider";
 import { ChatSuggestions } from "@/features/chatbot/chat-suggestions";
+import { useLanguage } from "@/lib/i18n";
 
 interface FloatingChatPanelProps {
   onClose?: () => void;
@@ -56,7 +57,8 @@ function ChatAvatar({
 }
 
 function ChatMessageItem({ message }: { message: ChatMessage }) {
-  const sourceLabel = message.source ? SOURCE_LABEL[message.source] : null;
+  const { tr } = useLanguage();
+  const sourceLabel = message.source ? tr(SOURCE_LABEL[message.source]) : null;
 
   return (
     <div
@@ -97,13 +99,15 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
 }
 
 function TypingIndicator() {
+  const { tr } = useLanguage();
+
   return (
     <div className="flex items-end gap-2" role="status" aria-live="polite">
       <ChatAvatar />
 
       <div
         className="flex items-center gap-1 rounded-2xl rounded-bl-md border border-border bg-surface px-4 py-3"
-        aria-label="Asisten sedang mengetik"
+        aria-label={tr("Asisten sedang mengetik")}
       >
         <span className="h-2 w-2 animate-bounce rounded-full bg-secondary-text/40" />
         <span className="h-2 w-2 animate-bounce rounded-full bg-secondary-text/40 [animation-delay:150ms]" />
@@ -118,17 +122,20 @@ function WelcomeMessage({
 }: {
   onSuggestionClick: (question: string) => void;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-3 py-8 text-center">
      
 
       <h3 className="text-base font-semibold text-main-text">
-        Halo! Ada yang bisa dibantu?
+        {tr("Halo! Ada yang bisa dibantu?")}
       </h3>
 
       <p className="mt-2 max-w-[270px] text-sm leading-6 text-secondary-text">
-        Tanyakan seputar penggunaan obat, interaksi, efek samping, atau
-        penyimpanan obat.
+        {tr(
+          "Tanyakan seputar penggunaan obat, interaksi, efek samping, atau penyimpanan obat."
+        )}
       </p>
 
       <div className="mt-5 flex flex-wrap justify-center gap-2">
@@ -151,6 +158,7 @@ export function FloatingChatPanel({
   onClose,
   onMaximize,
 }: FloatingChatPanelProps) {
+  const { tr } = useLanguage();
   const { messages, input, setInput, isTyping, isLoaded, error, send, clear } =
     useChat();
 
@@ -249,7 +257,7 @@ export function FloatingChatPanel({
 
   const handleClear = () => {
     if (messages.length === 0) return;
-    if (!window.confirm("Hapus seluruh riwayat percakapan?")) return;
+    if (!window.confirm(tr("Hapus seluruh riwayat percakapan?"))) return;
     void clear();
   };
 
@@ -258,13 +266,13 @@ export function FloatingChatPanel({
       className={cn(
         "pointer-events-none fixed z-40 flex flex-col items-end",
         isMobile
-          ? "bottom-[calc(1rem+var(--safe-bottom))] left-4 right-4 sm:bottom-10 sm:left-auto sm:right-6"
-          : "bottom-10 right-6",
+          ? "bottom-[calc(1.5rem+var(--safe-bottom))] left-5 right-5 sm:bottom-10 sm:left-auto sm:right-8"
+          : "bottom-10 right-8",
       )}
     >
       {!isOpen && (
         <div className="pointer-events-auto">
-          <FloatingButton onClick={openChat} tooltip="Butuh bantuan obat?" />
+          <FloatingButton onClick={openChat} tooltip={tr("Butuh bantuan obat?")} />
         </div>
       )}
 
@@ -273,7 +281,7 @@ export function FloatingChatPanel({
           ref={panelRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Asisten Apoteker Virtual"
+          aria-label={tr("Asisten Apoteker Virtual")}
           className={cn(
             "pointer-events-auto flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-soft",
             "animate-fade-in",
@@ -289,7 +297,7 @@ export function FloatingChatPanel({
                 <Avatar>
                   <AvatarImage
                     src="/images/chatbot-ava.jpg"
-                    alt="Asisten Apoteker"
+                    alt={tr("Asisten Apoteker")}
                     className="h-full w-full object-cover"
                   />
                 </Avatar>
@@ -297,7 +305,7 @@ export function FloatingChatPanel({
 
               <div className="min-w-0">
                 <h3 className="truncate text-sm font-semibold text-main-text">
-                  Asisten Apoteker Virtual
+                  {tr("Asisten Apoteker Virtual")}
                 </h3>
 
                 <div className="mt-0.5 flex items-center gap-1.5">
@@ -307,7 +315,7 @@ export function FloatingChatPanel({
                   </span>
 
                   <span className="text-xs font-medium text-secondary-text">
-                    Siap membantu
+                    {tr("Siap membantu")}
                   </span>
                 </div>
               </div>
@@ -318,8 +326,8 @@ export function FloatingChatPanel({
                 type="button"
                 onClick={handleClear}
                 disabled={messages.length === 0}
-                aria-label="Hapus riwayat percakapan"
-                title="Hapus riwayat percakapan"
+                aria-label={tr("Hapus riwayat percakapan")}
+                title={tr("Hapus riwayat percakapan")}
                 className="flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text transition-colors hover:bg-accent hover:text-main-text disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Trash2 className="h-4 w-4" />
@@ -328,7 +336,7 @@ export function FloatingChatPanel({
               <button
                 type="button"
                 onClick={closeChat}
-                aria-label="Tutup chat"
+                aria-label={tr("Tutup chat")}
                 className="flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text transition-colors hover:bg-accent hover:text-main-text"
               >
                 <X className="h-4 w-4" />
@@ -340,7 +348,7 @@ export function FloatingChatPanel({
           <div
             className="flex-1 space-y-4 overflow-y-auto bg-background/60 p-4 sm:p-5"
             aria-live="polite"
-            aria-label="Riwayat percakapan"
+            aria-label={tr("Riwayat percakapan")}
           >
             {messages.length === 0 ? (
               <WelcomeMessage onSuggestionClick={send} />
@@ -382,10 +390,10 @@ export function FloatingChatPanel({
                 type="text"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Ketik pertanyaan Anda..."
+                placeholder={tr("Ketik pertanyaan Anda...")}
                 disabled={isTyping || !isLoaded}
                 maxLength={500}
-                aria-label="Ketik pesan"
+                aria-label={tr("Ketik pesan")}
                 className={cn(
                   "h-11 min-w-0 flex-1 rounded-xl border border-input bg-surface px-3.5 text-sm text-main-text",
                   "placeholder:text-secondary-text/60 outline-none transition",
@@ -397,7 +405,7 @@ export function FloatingChatPanel({
               <button
                 type="submit"
                 disabled={!input.trim() || isTyping || !isLoaded}
-                aria-label="Kirim pesan"
+                aria-label={tr("Kirim pesan")}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-foreground transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />

@@ -7,8 +7,10 @@ import { Users, UserRound, SearchX } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useLanguage } from "@/lib/i18n";
 
 export function ManageUsersPage() {
+  const { tr } = useLanguage();
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,8 +37,8 @@ export function ManageUsersPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Kelola Pengguna"
-        description="Daftar profil pengguna yang terdaftar di platform."
+        title={tr("Kelola Pengguna")}
+        description={tr("Daftar profil pengguna yang terdaftar di platform.")}
         icon={Users}
       />
 
@@ -46,16 +48,20 @@ export function ManageUsersPage() {
             <UserRound className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-main-text">Pengguna Terdaftar</h2>
-            <p className="text-sm text-secondary-text">{users.length} profil di database</p>
+            <h2 className="text-base font-semibold text-main-text">{tr("Pengguna Terdaftar")}</h2>
+            <p className="text-sm text-secondary-text">
+              {tr("{count} profil di database", { count: users.length })}
+            </p>
           </div>
         </div>
         {users.length === 0 ? (
           <div className="p-6">
             <EmptyState
               icon={SearchX}
-              title="Belum ada profil pengguna"
-              description="Profil pengguna yang mendaftar akan ditampilkan di sini."
+              title={tr("Belum ada profil pengguna")}
+              description={tr(
+                "Profil pengguna yang mendaftar akan ditampilkan di sini.",
+              )}
             />
           </div>
         ) : (
@@ -67,12 +73,12 @@ export function ManageUsersPage() {
                     {user.fullName.charAt(0).toUpperCase() || "U"}
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-main-text">{user.fullName || "Tanpa nama"}</p>
+                    <p className="truncate text-sm font-medium text-main-text">{user.fullName || tr("Tanpa nama")}</p>
                     <p className="truncate text-xs text-secondary-text">{user.email}</p>
                   </div>
                 </div>
                 <Badge variant={user.role === "admin" ? "default" : "secondary"} className="shrink-0">
-                  {user.role === "admin" ? "Admin" : "Pasien"}
+                  {user.role === "admin" ? tr("Admin") : tr("Pasien")}
                 </Badge>
               </li>
             ))}

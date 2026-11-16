@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
+import { useLanguage } from "@/lib/i18n";
 
 import {
   Mail,
@@ -42,6 +43,7 @@ const ADMIN_LINKS = [
 
 export function ProfilePage() {
   const { user } = useAuth();
+  const { lang, t, tr } = useLanguage();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,16 +96,16 @@ export function ProfilePage() {
 
   const formatDate = (date?: string) =>
     date
-      ? new Date(date).toLocaleDateString("id-ID", {
+      ? new Date(date).toLocaleDateString(lang === "en" ? "en-US" : "id-ID", {
           day: "numeric",
           month: "long",
           year: "numeric",
         })
-      : "Belum diisi";
+      : tr("Belum diisi");
 
   const infoItems = [
     { icon: Mail, label: "Alamat Email", value: email ?? "-" },
-    { icon: Phone, label: "Nomor Telepon", value: phone || "Belum diisi" },
+    { icon: Phone, label: "Nomor Telepon", value: phone || tr("Belum diisi") },
     ...(!isAdmin
       ? [
           { icon: Cake, label: "Tanggal Lahir", value: formatDate(dateOfBirth) },
@@ -112,9 +114,9 @@ export function ProfilePage() {
             label: "Jenis Kelamin",
             value: gender
               ? gender === "laki-laki"
-                ? "Laki-laki"
-                : "Perempuan"
-              : "Belum diisi",
+                ? tr("Laki-laki")
+                : tr("Perempuan")
+              : tr("Belum diisi"),
           },
         ]
       : [
@@ -125,11 +127,11 @@ export function ProfilePage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Profil Saya"
+        title={tr("Profil Saya")}
         description={
           isAdmin
-            ? "Kelola informasi akun administrator Anda."
-            : "Kelola informasi pribadi dan preferensi kesehatan Anda."
+            ? tr("Kelola informasi akun administrator Anda.")
+            : tr("Kelola informasi pribadi dan preferensi kesehatan Anda.")
         }
         icon={UserRound}
       />
@@ -158,7 +160,7 @@ export function ProfilePage() {
 
               <div className="min-w-0 pb-1">
                 <h2 className="truncate text-xl font-bold text-main-text sm:text-2xl">
-                  {fullName || "Pengguna"}
+                  {fullName || tr("Pengguna")}
                 </h2>
 
                 <p className="mt-1 truncate text-sm text-secondary-text">
@@ -169,7 +171,7 @@ export function ProfilePage() {
                   variant={isAdmin ? "default" : "secondary"}
                   className="mt-2"
                 >
-                  {isAdmin ? "Administrator" : "Pasien"}
+                  {isAdmin ? "Administrator" : tr("Pasien")}
                 </Badge>
               </div>
             </div>
@@ -177,7 +179,7 @@ export function ProfilePage() {
             <Button asChild variant="outline" className="w-full shrink-0 sm:w-auto">
               <Link to="/pengaturan">
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit Profil
+                {tr("Edit Profil")}
               </Link>
             </Button>
           </div>
@@ -189,10 +191,10 @@ export function ProfilePage() {
           <div>
             <div className="mb-4">
               <h3 className="text-base font-semibold text-main-text">
-                Informasi Pribadi
+                {tr("Informasi Pribadi")}
               </h3>
               <p className="mt-1 text-sm text-secondary-text">
-                Informasi akun dan identitas Anda.
+                {tr("Informasi akun dan identitas Anda.")}
               </p>
             </div>
 
@@ -211,7 +213,7 @@ export function ProfilePage() {
 
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-secondary-text">
-                        {item.label}
+                        {tr(item.label)}
                       </p>
                       <p className="mt-1 truncate text-sm font-semibold text-main-text">
                         {item.value}
@@ -228,10 +230,10 @@ export function ProfilePage() {
             <div className="mt-7 border-t border-border pt-6">
               <div className="mb-4">
                 <h3 className="text-base font-semibold text-main-text">
-                  Akses Administrator
+                  {tr("Akses Administrator")}
                 </h3>
                 <p className="mt-1 text-sm text-secondary-text">
-                  Akses cepat ke fitur pengelolaan ApotekerKita.
+                  {tr("Akses cepat ke fitur pengelolaan ApotekerKita.")}
                 </p>
               </div>
 
@@ -251,10 +253,10 @@ export function ProfilePage() {
 
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-main-text">
-                          {link.label}
+                          {tr(link.label)}
                         </p>
                         <p className="mt-0.5 truncate text-xs text-secondary-text">
-                          {link.description}
+                          {tr(link.description)}
                         </p>
                       </div>
 
@@ -273,16 +275,16 @@ export function ProfilePage() {
 
                 <div>
                   <p className="text-sm font-semibold text-main-text">
-                    Notifikasi Pengingat
+                    {tr("Notifikasi Pengingat")}
                   </p>
                   <p className="mt-0.5 text-xs text-secondary-text">
-                    Pengingat jadwal minum obat
+                    {tr("Pengingat jadwal minum obat")}
                   </p>
                 </div>
               </div>
 
               <Badge variant={notifActive ? "success" : "secondary"}>
-                {notifActive ? "Aktif" : "Tidak Aktif"}
+                {notifActive ? tr("Aktif") : tr("Tidak Aktif")}
               </Badge>
             </div>
           )}
@@ -293,7 +295,7 @@ export function ProfilePage() {
 
             <div>
               <p className="text-xs text-secondary-text">
-                Bergabung sejak
+                {t("profile_member_since")}
               </p>
               <p className="mt-0.5 text-sm font-semibold text-main-text">
                 {formatDate(createdAt)}
@@ -307,8 +309,8 @@ export function ProfilePage() {
 
             <p className="text-xs leading-relaxed text-secondary-text">
               {isAdmin
-                ? "Jaga kerahasiaan akun administrator. Pastikan data referensi dikelola secara berkala agar informasi tetap akurat."
-                : "Pastikan informasi profil Anda selalu terkini agar layanan dan pengingat kesehatan dapat berjalan dengan optimal."}
+                ? t("profile_footer_note_admin")
+                : t("profile_footer_note_pasien")}
             </p>
           </div>
         </div>

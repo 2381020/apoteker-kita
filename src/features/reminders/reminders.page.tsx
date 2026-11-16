@@ -21,6 +21,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 const emptyForm: ReminderInput = {
   medicationName: "",
@@ -33,6 +34,7 @@ const emptyForm: ReminderInput = {
 export function PengingatPage() {
   const { user } = useAuth();
   const { add } = useToast();
+  const { tr } = useLanguage();
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -95,7 +97,7 @@ export function PengingatPage() {
           prev.map((r) => (r.id === editingId ? updated : r)),
         );
         add({
-          title: "Pengingat diperbarui",
+          title: tr("Pengingat diperbarui"),
           description: form.medicationName,
           variant: "success",
         });
@@ -103,7 +105,7 @@ export function PengingatPage() {
         const created = await createReminder(user.id, form);
         setReminders((prev) => [created, ...prev]);
         add({
-          title: "Pengingat ditambahkan",
+          title: tr("Pengingat ditambahkan"),
           description: form.medicationName,
           variant: "success",
         });
@@ -113,9 +115,9 @@ export function PengingatPage() {
       setForm({ ...emptyForm });
     } catch (error) {
       add({
-        title: "Gagal menyimpan pengingat",
+        title: tr("Gagal menyimpan pengingat"),
         description:
-          error instanceof Error ? error.message : "Terjadi kesalahan",
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     } finally {
@@ -131,9 +133,9 @@ export function PengingatPage() {
       );
     } catch (error) {
       add({
-        title: "Gagal mengubah status",
+        title: tr("Gagal mengubah status"),
         description:
-          error instanceof Error ? error.message : "Terjadi kesalahan",
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     }
@@ -145,15 +147,15 @@ export function PengingatPage() {
       await deleteReminder(id);
       setReminders((prev) => prev.filter((r) => r.id !== id));
       add({
-        title: "Pengingat dihapus",
+        title: tr("Pengingat dihapus"),
         description: target?.medicationName,
         variant: "success",
       });
     } catch (error) {
       add({
-        title: "Gagal menghapus pengingat",
+        title: tr("Gagal menghapus pengingat"),
         description:
-          error instanceof Error ? error.message : "Terjadi kesalahan",
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     }
@@ -162,29 +164,33 @@ export function PengingatPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Pengingat Obat"
-        description={`Kelola jadwal minum obat Anda. ${activeCount} pengingat aktif.`}
+        title={tr("Pengingat Obat")}
+        description={tr("Kelola jadwal minum obat Anda. {count} pengingat aktif.", {
+          count: activeCount,
+        })}
         icon={BellRing}
       >
         <Button onClick={openCreate}>
           <Plus className="mr-1.5 h-4 w-4" />
-          Tambah Pengingat
+          {tr("Tambah Pengingat")}
         </Button>
       </PageHeader>
 
       <Card className="overflow-hidden">
         <div className="border-b border-border px-4 py-4 sm:px-5">
           <h2 className="text-base font-semibold text-main-text">
-            Daftar Pengingat
+            {tr("Daftar Pengingat")}
           </h2>
         </div>
         {reminders.length === 0 ? (
           <div className="p-6">
             <EmptyState
               icon={BellRing}
-              title="Belum ada pengingat"
-              description="Tambahkan pengingat pertama Anda untuk jadwal minum obat."
-              actionLabel="Tambah pengingat"
+              title={tr("Belum ada pengingat")}
+              description={tr(
+                "Tambahkan pengingat pertama Anda untuk jadwal minum obat.",
+              )}
+              actionLabel={tr("Tambah pengingat")}
               onAction={openCreate}
             />
           </div>
@@ -195,7 +201,9 @@ export function PengingatPage() {
                 <button
                   onClick={() => toggle(r)}
                   aria-label={
-                    r.isActive ? "Nonaktifkan pengingat" : "Aktifkan pengingat"
+                    r.isActive
+                      ? tr("Nonaktifkan pengingat")
+                      : tr("Aktifkan pengingat")
                   }
                   aria-pressed={r.isActive}
                   className="-ml-2 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
@@ -234,13 +242,15 @@ export function PengingatPage() {
                       : "bg-muted text-secondary-text",
                   )}
                 >
-                  {r.isActive ? "Aktif" : "Nonaktif"}
+                  {r.isActive ? tr("Aktif") : tr("Nonaktif")}
                 </span>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => openEdit(r)}
-                  aria-label={`Edit pengingat ${r.medicationName}`}
+                  aria-label={tr("Edit pengingat {name}", {
+                    name: r.medicationName,
+                  })}
                   className="h-11 w-11 shrink-0 sm:h-9 sm:w-9"
                 >
                   <Pencil className="h-4 w-4" />
@@ -249,7 +259,9 @@ export function PengingatPage() {
                   size="sm"
                   variant="ghost"
                   onClick={() => setDeleteId(r.id)}
-                  aria-label={`Hapus pengingat ${r.medicationName}`}
+                  aria-label={tr("Hapus pengingat {name}", {
+                    name: r.medicationName,
+                  })}
                   className="h-11 w-11 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive sm:h-9 sm:w-9"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -266,26 +278,26 @@ export function PengingatPage() {
           setOpen(o);
           if (!o) setEditingId(null);
         }}
-        title={editingId ? "Edit Pengingat" : "Tambah Pengingat Baru"}
+        title={editingId ? tr("Edit Pengingat") : tr("Tambah Pengingat Baru")}
       >
         <div className="space-y-4">
           <p className="text-sm text-secondary-text">
-            Isi detail jadwal minum obat Anda.
+            {tr("Isi detail jadwal minum obat Anda.")}
           </p>
           <div className="space-y-2">
-            <Label htmlFor="medicationName">Nama Obat</Label>
+            <Label htmlFor="medicationName">{tr("Nama Obat")}</Label>
             <Input
               id="medicationName"
               value={form.medicationName}
               onChange={(e) =>
                 setForm({ ...form, medicationName: e.target.value })
               }
-              placeholder="Contoh: Paracetamol"
+              placeholder={tr("Contoh: Paracetamol")}
             />
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="dosage">Dosis</Label>
+              <Label htmlFor="dosage">{tr("Dosis")}</Label>
               <Input
                 id="dosage"
                 value={form.dosage}
@@ -294,18 +306,18 @@ export function PengingatPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="frequency">Frekuensi</Label>
+              <Label htmlFor="frequency">{tr("Frekuensi")}</Label>
               <Input
                 id="frequency"
                 value={form.frequency}
                 onChange={(e) =>
                   setForm({ ...form, frequency: e.target.value })
                 }
-                placeholder="3x/hari"
+                placeholder={tr("3x/hari")}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="time">Waktu</Label>
+              <Label htmlFor="time">{tr("Waktu")}</Label>
               <Input
                 id="time"
                 type="time"
@@ -315,7 +327,7 @@ export function PengingatPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="startDate">Tanggal Mulai</Label>
+            <Label htmlFor="startDate">{tr("Tanggal Mulai")}</Label>
             <Input
               id="startDate"
               type="date"
@@ -326,17 +338,17 @@ export function PengingatPage() {
           <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={() => setOpen(false)}>
               <X className="mr-1.5 h-4 w-4" />
-              Batal
+              {tr("Batal")}
             </Button>
             <Button
               onClick={save}
               disabled={saving || !form.medicationName.trim()}
             >
               {saving
-                ? "Menyimpan..."
+                ? tr("Menyimpan...")
                 : editingId
-                  ? "Simpan Perubahan"
-                  : "Simpan"}
+                  ? tr("Simpan Perubahan")
+                  : tr("Simpan")}
             </Button>
           </div>
         </div>
@@ -345,8 +357,8 @@ export function PengingatPage() {
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(o) => !o && setDeleteId(null)}
-        title="Hapus pengingat ini?"
-        description="Pengingat akan dihapus permanen dari database."
+        title={tr("Hapus pengingat ini?")}
+        description={tr("Pengingat akan dihapus permanen dari database.")}
         onConfirm={() => {
           if (deleteId) {
             void hapus(deleteId);

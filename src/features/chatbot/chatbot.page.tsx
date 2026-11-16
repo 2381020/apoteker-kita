@@ -11,6 +11,7 @@ import { SUGGESTIONS, type ChatSource } from "@/lib/chatbot";
 import type { ChatMessage } from "@/lib/chatbot";
 import { useChat } from "@/features/chatbot/chat-provider";
 import { ChatSuggestions } from "@/features/chatbot/chat-suggestions";
+import { useLanguage } from "@/lib/i18n";
 
 const SOURCE_LABEL: Record<ChatSource, string> = {
   emergency: "Panduan darurat",
@@ -38,7 +39,8 @@ function ChatAvatar({ isUser = false }: { isUser?: boolean }) {
 }
 
 function ChatBubble({ message }: { message: ChatMessage }) {
-  const sourceLabel = message.source ? SOURCE_LABEL[message.source] : null;
+  const { tr } = useLanguage();
+  const sourceLabel = message.source ? tr(SOURCE_LABEL[message.source]) : null;
 
   return (
     <div
@@ -79,13 +81,15 @@ function ChatBubble({ message }: { message: ChatMessage }) {
 }
 
 function TypingIndicator() {
+  const { tr } = useLanguage();
+
   return (
     <div className="flex items-end gap-2" role="status" aria-live="polite">
       <ChatAvatar />
 
       <div
         className="flex items-center gap-1 rounded-2xl rounded-bl-md border border-border bg-surface px-4 py-3"
-        aria-label="Asisten sedang mengetik"
+        aria-label={tr("Asisten sedang mengetik")}
       >
         <span className="h-2 w-2 animate-bounce rounded-full bg-secondary-text/40" />
         <span className="h-2 w-2 animate-bounce rounded-full bg-secondary-text/40 [animation-delay:150ms]" />
@@ -100,6 +104,8 @@ function WelcomeMessage({
 }: {
   onSuggestionClick: (text: string) => void;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="flex flex-col items-center px-3 pt-6 text-center sm:px-4 sm:pt-16">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-primary">
@@ -107,12 +113,13 @@ function WelcomeMessage({
       </div>
 
       <h3 className="mt-4 text-lg font-semibold text-main-text">
-        Halo! Saya asisten ApotekerKita
+        {tr("Halo! Saya asisten ApotekerKita")}
       </h3>
 
       <p className="mt-1 max-w-sm text-sm leading-relaxed text-secondary-text">
-        Tanyakan seputar penggunaan obat, interaksi, penyimpanan, atau efek
-        samping. Saya akan membantu berdasarkan informasi yang tersedia.
+        {tr(
+          "Tanyakan seputar penggunaan obat, interaksi, penyimpanan, atau efek samping. Saya akan membantu berdasarkan informasi yang tersedia."
+        )}
       </p>
 
       <div className="mt-5 flex max-w-md flex-wrap justify-center gap-2">
@@ -132,6 +139,7 @@ function WelcomeMessage({
 }
 
 export function TanyaPage() {
+  const { tr } = useLanguage();
   const { messages, input, setInput, isTyping, isLoaded, error, send, clear } =
     useChat();
 
@@ -150,15 +158,17 @@ export function TanyaPage() {
 
   const handleClear = () => {
     if (messages.length === 0) return;
-    if (!window.confirm("Hapus seluruh riwayat percakapan?")) return;
+    if (!window.confirm(tr("Hapus seluruh riwayat percakapan?"))) return;
     void clear();
   };
 
   return (
     <div className="animate-fade-in mx-auto max-w-3xl space-y-6">
       <PageHeader
-        title="Tanya Apoteker"
-        description="Konsultasi seputar obat dengan asisten virtual ApotekerKita."
+        title={tr("Tanya Apoteker")}
+        description={tr(
+          "Konsultasi seputar obat dengan asisten virtual ApotekerKita."
+        )}
         icon={MessageCircle}
       />
 
@@ -171,12 +181,12 @@ export function TanyaPage() {
 
           <div className="min-w-0 flex-1">
             <h2 className="text-sm font-semibold text-main-text">
-              Asisten Apoteker Virtual
+              {tr("Asisten Apoteker Virtual")}
             </h2>
 
             <p className="flex items-center gap-1.5 text-xs text-secondary-text">
               <span className="h-2 w-2 rounded-full bg-success" />
-              Siap membantu
+              {tr("Siap membantu")}
             </p>
           </div>
 
@@ -186,8 +196,8 @@ export function TanyaPage() {
             size="icon"
             onClick={handleClear}
             disabled={messages.length === 0}
-            aria-label="Hapus riwayat percakapan"
-            title="Hapus riwayat percakapan"
+            aria-label={tr("Hapus riwayat percakapan")}
+            title={tr("Hapus riwayat percakapan")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -198,7 +208,7 @@ export function TanyaPage() {
           ref={scrollRef}
           className="flex-1 space-y-4 overflow-y-auto bg-background/60 px-4 py-5 sm:px-6"
           aria-live="polite"
-          aria-label="Riwayat percakapan"
+          aria-label={tr("Riwayat percakapan")}
         >
           {messages.length === 0 && <WelcomeMessage onSuggestionClick={send} />}
 
@@ -234,11 +244,11 @@ export function TanyaPage() {
             <Input
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Ketik pertanyaan Anda..."
+              placeholder={tr("Ketik pertanyaan Anda...")}
               className="h-10 flex-1"
               maxLength={500}
               disabled={isTyping || !isLoaded}
-              aria-label="Pesan"
+              aria-label={tr("Pesan")}
             />
 
             <Button
@@ -246,15 +256,16 @@ export function TanyaPage() {
               size="icon"
               className="h-10 w-10 shrink-0"
               disabled={!input.trim() || isTyping || !isLoaded}
-              aria-label="Kirim pesan"
+              aria-label={tr("Kirim pesan")}
             >
               <Send className="h-4 w-4" />
             </Button>
           </form>
 
           <p className="mt-2 px-1 text-[11px] leading-relaxed text-secondary-text">
-            Informasi yang diberikan bersifat umum dan bukan pengganti
-            konsultasi langsung dengan dokter atau apoteker.
+            {tr(
+              "Informasi yang diberikan bersifat umum dan bukan pengganti konsultasi langsung dengan dokter atau apoteker."
+            )}
           </p>
         </div>
       </div>
@@ -264,9 +275,9 @@ export function TanyaPage() {
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
 
         <p className="text-xs leading-relaxed text-secondary-text">
-          Asisten virtual menjawab berdasarkan basis data obat, interaksi, dan
-          panduan ApotekerKita. Untuk kondisi darurat atau gejala serius, segera
-          hubungi fasilitas kesehatan terdekat.
+          {tr(
+            "Asisten virtual menjawab berdasarkan basis data obat, interaksi, dan panduan ApotekerKita. Untuk kondisi darurat atau gejala serius, segera hubungi fasilitas kesehatan terdekat."
+          )}
         </p>
       </div>
     </div>

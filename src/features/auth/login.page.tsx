@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
+import { useLanguage } from "@/lib/i18n";
 
 const schema = z.object({
   email: z.string().email("Masukkan email yang valid"),
@@ -21,6 +22,7 @@ const schema = z.object({
 type LoginFormData = z.infer<typeof schema>;
 
 export function LoginPage() {
+  const { tr } = useLanguage();
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -44,13 +46,13 @@ export function LoginPage() {
       const result = await login(data.email, data.password);
 
       if (!result.ok) {
-        setError(result.error ?? "Login gagal");
+        setError(result.error ?? tr("Login gagal"));
         return;
       }
 
       navigate(result.role === "admin" ? "/admin" : "/dashboard");
     } catch {
-      setError("Terjadi kesalahan. Silakan coba kembali.");
+      setError(tr("Terjadi kesalahan. Silakan coba kembali."));
     } finally {
       setSubmitting(false);
     }
@@ -75,11 +77,11 @@ export function LoginPage() {
         </div>
 
         <h1 className="mt-4 text-2xl font-bold tracking-tight text-main-text">
-          Selamat datang kembali
+          {tr("Selamat datang kembali")}
         </h1>
 
         <p className="mt-1.5 text-sm text-secondary-text">
-          Masuk untuk mengelola obat dan pengingat Anda.
+          {tr("Masuk untuk mengelola obat dan pengingat Anda.")}
         </p>
       </div>
 
@@ -87,7 +89,7 @@ export function LoginPage() {
       {error && (
         <Alert
           variant="destructive"
-          title="Kesalahan"
+          title={tr("Kesalahan")}
           description={error}
           className="mt-6"
         />
@@ -112,16 +114,16 @@ export function LoginPage() {
             />
           </div>
 
-          {errors.email && (
+          {errors.email?.message && (
             <p className="text-sm text-destructive">
-              {errors.email.message}
+              {tr(errors.email.message)}
             </p>
           )}
         </div>
 
         {/* Password */}
         <div className="space-y-2">
-          <Label htmlFor="password">Kata Sandi</Label>
+          <Label htmlFor="password">{tr("Kata Sandi")}</Label>
 
           <div className="relative">
             <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-text" />
@@ -129,16 +131,16 @@ export function LoginPage() {
             <Input
               id="password"
               type="password"
-              placeholder="Masukkan kata sandi"
+              placeholder={tr("Masukkan kata sandi")}
               autoComplete="current-password"
               className="pl-9"
               {...register("password")}
             />
           </div>
 
-          {errors.password && (
+          {errors.password?.message && (
             <p className="text-sm text-destructive">
-              {errors.password.message}
+              {tr(errors.password.message)}
             </p>
           )}
         </div>
@@ -150,17 +152,17 @@ export function LoginPage() {
           className="w-full"
           disabled={submitting}
         >
-          {submitting ? "Memproses..." : "Masuk"}
+          {submitting ? tr("Memproses...") : tr("Masuk")}
         </Button>
 
         {/* Register Link */}
         <p className="pt-1 text-center text-sm text-secondary-text">
-          Belum punya akun?{" "}
+          {tr("Belum punya akun?")}{" "}
           <Link
             to="/register"
             className="font-semibold text-primary hover:underline"
           >
-            Daftar di sini
+            {tr("Daftar di sini")}
           </Link>
         </p>
       </form>
@@ -169,7 +171,7 @@ export function LoginPage() {
       <div className="mt-8 border-t border-border pt-5">
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-secondary-text">
           <UserRound className="h-3.5 w-3.5" />
-          Akun demo — ketuk untuk mengisi otomatis
+          {tr("Akun demo — ketuk untuk mengisi otomatis")}
         </p>
 
         <div className="mt-3 space-y-2">
@@ -181,7 +183,7 @@ export function LoginPage() {
               className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-3 text-left text-sm transition-colors hover:border-primary/40 hover:bg-primary-soft/40"
             >
               <span className="shrink-0 font-medium text-main-text">
-                {account.role === "admin" ? "Admin" : "Pasien"}
+                {account.role === "admin" ? "Admin" : tr("Pasien")}
               </span>
 
               <span className="truncate text-xs text-secondary-text">

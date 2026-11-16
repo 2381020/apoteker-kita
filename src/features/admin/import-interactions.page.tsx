@@ -27,6 +27,7 @@ import {
   type ImportResult,
 } from "@/services/import.service";
 import type { InteractionSeverity } from "@/types";
+import { useLanguage } from "@/lib/i18n";
 
 const severityOrder: InteractionSeverity[] = [
   "berat",
@@ -68,6 +69,8 @@ const emptyStats: ParseStats = {
 
 export function ImportInteractionsPage() {
   const { add } = useToast();
+  const { lang, tr } = useLanguage();
+  const locale = lang === "en" ? "en-US" : "id-ID";
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [files, setFiles] = useState<File[]>([]);
@@ -114,8 +117,8 @@ export function ImportInteractionsPage() {
 
     if (selected.length === 0) {
       add({
-        title: "File tidak valid",
-        description: "Pilih file CSV dari dataset DDInter.",
+        title: tr("File tidak valid"),
+        description: tr("Pilih file CSV dari dataset DDInter."),
         variant: "destructive",
       });
       return;
@@ -153,7 +156,7 @@ export function ImportInteractionsPage() {
       } catch (error) {
         errors.push(
           `${file.name}: ${
-            error instanceof Error ? error.message : "Gagal membaca file"
+            error instanceof Error ? error.message : tr("Gagal membaca file")
           }`
         );
       }
@@ -188,7 +191,7 @@ export function ImportInteractionsPage() {
       if (!readiness.ready) {
         setProgress(null);
         add({
-          title: "Belum siap mengimpor",
+          title: tr("Belum siap mengimpor"),
           description: readiness.message,
           variant: "destructive",
         });
@@ -198,15 +201,18 @@ export function ImportInteractionsPage() {
       const imported = await importDDInterRows(rows, setProgress);
       setResult(imported);
       add({
-        title: "Import selesai",
-        description: `${imported.inserted} interaksi masuk, ${imported.skipped} dilewati.`,
+        title: tr("Import selesai"),
+        description: tr(
+          "{inserted} interaksi masuk, {skipped} dilewati.",
+          { inserted: imported.inserted, skipped: imported.skipped },
+        ),
         variant: imported.errors.length > 0 ? "warning" : "success",
       });
     } catch (error) {
       add({
-        title: "Import gagal",
+        title: tr("Import gagal"),
         description:
-          error instanceof Error ? error.message : "Terjadi kesalahan",
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     } finally {
@@ -220,15 +226,17 @@ export function ImportInteractionsPage() {
       const removed = await resetDDInterData();
       resetState();
       add({
-        title: "Data DDInter dihapus",
-        description: `${removed} interaksi dihapus dari database.`,
+        title: tr("Data DDInter dihapus"),
+        description: tr("{count} interaksi dihapus dari database.", {
+          count: removed,
+        }),
         variant: "success",
       });
     } catch (error) {
       add({
-        title: "Gagal menghapus data",
+        title: tr("Gagal menghapus data"),
         description:
-          error instanceof Error ? error.message : "Terjadi kesalahan",
+          error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     } finally {
@@ -256,8 +264,10 @@ export function ImportInteractionsPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Import Interaksi"
-        description="Unggah dataset DDInter 2.0 (CSV) untuk mengisi data interaksi obat."
+        title={tr("Import Interaksi")}
+        description={tr(
+          "Unggah dataset DDInter 2.0 (CSV) untuk mengisi data interaksi obat.",
+        )}
         icon={Upload}
       >
         <Button
@@ -267,7 +277,7 @@ export function ImportInteractionsPage() {
           className="w-full sm:w-auto"
         >
           <RotateCcw className="mr-1.5 h-4 w-4" />
-          Hapus Data DDInter
+          {tr("Hapus Data DDInter")}
         </Button>
       </PageHeader>
 
@@ -291,11 +301,12 @@ export function ImportInteractionsPage() {
         >
           <FileSpreadsheet size={40} className="text-primary" />
           <h2 className="mt-3 text-base font-semibold text-main-text">
-            Tarik file CSV ke sini
+            {tr("Tarik file CSV ke sini")}
           </h2>
           <p className="mt-1 max-w-md text-sm text-secondary-text">
-            Format kolom: DDInterID_A, Drug_A, DDInterID_B, Drug_B, Level.
-            Bisa pilih beberapa file sekaligus.
+            {tr(
+              "Format kolom: DDInterID_A, Drug_A, DDInterID_B, Drug_B, Level. Bisa pilih beberapa file sekaligus.",
+            )}
           </p>
 
           <input
@@ -316,7 +327,7 @@ export function ImportInteractionsPage() {
             disabled={parsing || importing}
           >
             <Upload className="mr-1.5 h-4 w-4" />
-            {parsing ? "Membaca file..." : "Pilih File CSV"}
+            {parsing ? tr("Membaca file...") : tr("Pilih File CSV")}
           </Button>
         </div>
 
@@ -342,27 +353,27 @@ export function ImportInteractionsPage() {
         {!parsing && rows.length > 0 && (
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border border-border bg-surface p-3">
-              <p className="text-xs text-secondary-text">Baris terbaca</p>
+              <p className="text-xs text-secondary-text">{tr("Baris terbaca")}</p>
               <p className="text-lg font-semibold text-main-text">
-                {stats.totalRows.toLocaleString("id-ID")}
+                {stats.totalRows.toLocaleString(locale)}
               </p>
             </div>
             <div className="rounded-lg border border-border bg-surface p-3">
-              <p className="text-xs text-secondary-text">Siap diimpor</p>
+              <p className="text-xs text-secondary-text">{tr("Siap diimpor")}</p>
               <p className="text-lg font-semibold text-main-text">
-                {rows.length.toLocaleString("id-ID")}
+                {rows.length.toLocaleString(locale)}
               </p>
             </div>
             <div className="rounded-lg border border-border bg-surface p-3">
-              <p className="text-xs text-secondary-text">Duplikat dilewati</p>
+              <p className="text-xs text-secondary-text">{tr("Duplikat dilewati")}</p>
               <p className="text-lg font-semibold text-main-text">
-                {stats.duplicates.toLocaleString("id-ID")}
+                {stats.duplicates.toLocaleString(locale)}
               </p>
             </div>
             <div className="rounded-lg border border-border bg-surface p-3">
-              <p className="text-xs text-secondary-text">Error baca</p>
+              <p className="text-xs text-secondary-text">{tr("Error baca")}</p>
               <p className="text-lg font-semibold text-main-text">
-                {stats.errors.length.toLocaleString("id-ID")}
+                {stats.errors.length.toLocaleString(locale)}
               </p>
             </div>
           </div>
@@ -372,7 +383,7 @@ export function ImportInteractionsPage() {
           <div className="mt-4 flex flex-wrap gap-2">
             {severityOrder.map((severity) => (
               <Badge key={severity} variant={severityVariant[severity]}>
-                {severityLabel[severity]}: {severityCounts[severity].toLocaleString("id-ID")}
+                {tr(severityLabel[severity])}: {severityCounts[severity].toLocaleString(locale)}
               </Badge>
             ))}
           </div>
@@ -381,15 +392,15 @@ export function ImportInteractionsPage() {
         {!parsing && rows.length > 0 && (
           <div className="mt-5">
             <p className="mb-2 text-xs text-secondary-text sm:hidden">
-              Geser tabel ke samping untuk melihat semua kolom.
+              {tr("Geser tabel ke samping untuk melihat semua kolom.")}
             </p>
             <div className="overflow-x-auto rounded-lg border border-border">
               <table className="w-full min-w-[480px] text-left text-sm sm:min-w-[560px]">
               <thead>
                 <tr className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-secondary-text">
-                  <th className="px-3 py-2 font-semibold">Obat A</th>
-                  <th className="px-3 py-2 font-semibold">Obat B</th>
-                  <th className="px-3 py-2 font-semibold">Level</th>
+                  <th className="px-3 py-2 font-semibold">{tr("Obat A")}</th>
+                  <th className="px-3 py-2 font-semibold">{tr("Obat B")}</th>
+                  <th className="px-3 py-2 font-semibold">{tr("Level")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -399,7 +410,7 @@ export function ImportInteractionsPage() {
                     <td className="px-3 py-2 text-main-text">{row.medicationB}</td>
                     <td className="px-3 py-2">
                       <Badge variant={severityVariant[row.severity]}>
-                        {severityLabel[row.severity]}
+                        {tr(severityLabel[row.severity])}
                       </Badge>
                     </td>
                   </tr>
@@ -408,7 +419,9 @@ export function ImportInteractionsPage() {
             </table>
             {rows.length > 10 && (
               <p className="border-t border-border px-3 py-2 text-xs text-secondary-text">
-                Menampilkan 10 dari {rows.length.toLocaleString("id-ID")} baris.
+                {tr("Menampilkan 10 dari {count} baris.", {
+                  count: rows.length.toLocaleString(locale),
+                })}
               </p>
             )}
           </div>
@@ -423,7 +436,7 @@ export function ImportInteractionsPage() {
             disabled={parsing || importing || rows.length === 0}
           >
             <Play className="mr-2 h-4 w-4" />
-            {importing ? "Mengimpor..." : "Mulai Import"}
+            {importing ? tr("Mengimpor...") : tr("Mulai Import")}
           </Button>
 
           {rows.length > 0 && !importing && (
@@ -436,7 +449,7 @@ export function ImportInteractionsPage() {
               }}
             >
               <X className="mr-2 h-4 w-4" />
-              Bersihkan
+              {tr("Bersihkan")}
             </Button>
           )}
         </div>
@@ -444,10 +457,10 @@ export function ImportInteractionsPage() {
         {progress && (
           <div className="mt-5 space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-main-text">Progres import</span>
+              <span className="text-main-text">{tr("Progres import")}</span>
               <span className="text-secondary-text">
-                {progress.processed.toLocaleString("id-ID")} /{" "}
-                {progress.total.toLocaleString("id-ID")} ({progressPercent}%)
+                {progress.processed.toLocaleString(locale)} /{" "}
+                {progress.total.toLocaleString(locale)} ({progressPercent}%)
               </span>
             </div>
             <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
@@ -457,8 +470,8 @@ export function ImportInteractionsPage() {
               />
             </div>
             <div className="flex flex-wrap gap-3 text-xs text-secondary-text">
-              <span>Masuk: {progress.inserted.toLocaleString("id-ID")}</span>
-              <span>Dilewati: {progress.skipped.toLocaleString("id-ID")}</span>
+              <span>{tr("Masuk:")} {progress.inserted.toLocaleString(locale)}</span>
+              <span>{tr("Dilewati:")} {progress.skipped.toLocaleString(locale)}</span>
               {progress.errors.length > 0 && (
                 <span className="text-destructive">
                   Error: {progress.errors.length}
@@ -479,11 +492,13 @@ export function ImportInteractionsPage() {
             )}
             <div>
               <h2 className="text-base font-semibold text-main-text">
-                Import selesai
+                {tr("Import selesai")}
               </h2>
               <p className="mt-1 text-sm text-secondary-text">
-                {result.inserted.toLocaleString("id-ID")} interaksi masuk,{" "}
-                {result.skipped.toLocaleString("id-ID")} dilewati.
+                {tr("{inserted} interaksi masuk, {skipped} dilewati.", {
+                  inserted: result.inserted.toLocaleString(locale),
+                  skipped: result.skipped.toLocaleString(locale),
+                })}
               </p>
             </div>
           </div>
@@ -495,7 +510,7 @@ export function ImportInteractionsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-base font-semibold text-main-text">
               <AlertTriangle size={18} className="text-warning" />
-              Catatan / error ({allErrors.length})
+              {tr("Catatan / error ({count})", { count: allErrors.length })}
             </h2>
             <Button
               size="sm"
@@ -503,7 +518,7 @@ export function ImportInteractionsPage() {
               onClick={() => downloadErrors(allErrors)}
             >
               <Download className="mr-1.5 h-3.5 w-3.5" />
-              Unduh Log
+              {tr("Unduh Log")}
             </Button>
           </div>
           <ul className="mt-3 max-h-64 space-y-1.5 overflow-y-auto text-sm text-secondary-text">
@@ -515,8 +530,10 @@ export function ImportInteractionsPage() {
           </ul>
           {allErrors.length > 100 && (
             <p className="mt-2 text-xs text-secondary-text">
-              Menampilkan 100 dari {allErrors.length} catatan. Unduh log untuk
-              melihat semuanya.
+              {tr(
+                "Menampilkan 100 dari {count} catatan. Unduh log untuk melihat semuanya.",
+                { count: allErrors.length },
+              )}
             </p>
           )}
         </Card>
@@ -525,9 +542,11 @@ export function ImportInteractionsPage() {
       <ConfirmDialog
         open={resetOpen}
         onOpenChange={setResetOpen}
-        title="Hapus semua data DDInter?"
-        description="Semua interaksi dengan sumber DDInter 2.0 akan dihapus dari database. Data interaksi manual tidak terpengaruh."
-        confirmLabel="Ya, hapus"
+        title={tr("Hapus semua data DDInter?")}
+        description={tr(
+          "Semua interaksi dengan sumber DDInter 2.0 akan dihapus dari database. Data interaksi manual tidak terpengaruh.",
+        )}
+        confirmLabel={tr("Ya, hapus")}
         onConfirm={() => {
           void handleReset();
         }}

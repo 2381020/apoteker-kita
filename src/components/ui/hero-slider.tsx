@@ -3,6 +3,7 @@ import type { TouchEvent as ReactTouchEvent } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ArrowRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface HeroSlide {
   title: string;
@@ -63,6 +64,7 @@ function preloadImage(src: string) {
 }
 
 export function HeroSlider() {
+  const { tr } = useLanguage();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
@@ -145,7 +147,7 @@ export function HeroSlider() {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       aria-roledescription="carousel"
-      aria-label="Sorotan ApotekerKita"
+      aria-label={tr("Sorotan ApotekerKita")}
     >
       <div className="grid items-center gap-5 px-4 py-6 pb-14 sm:gap-6 sm:px-10 sm:py-10 sm:pb-16 lg:min-h-[420px] lg:grid-cols-2 lg:px-14">
         {/* Konten teks */}
@@ -154,22 +156,22 @@ export function HeroSlider() {
           className="relative z-10 flex flex-col items-start animate-fade-in"
         >
           <span className="mb-3 inline-flex items-center rounded-full bg-[#FFD54F]/30 px-3 py-1.5 text-[11px] font-semibold text-[#263238] sm:mb-4 sm:px-4 sm:text-xs">
-            Apoteker Kita · Sahabat Kesehatan
+            {tr("Apoteker Kita · Sahabat Kesehatan")}
           </span>
 
           <h1 className="mb-3 max-w-xl text-2xl font-bold leading-tight tracking-tight text-[#263238] sm:mb-4 sm:text-4xl lg:text-5xl">
-            {currentSlide.title}
+            {tr(currentSlide.title)}
           </h1>
 
           <p className="mb-5 max-w-md text-sm leading-relaxed text-[#263238]/75 sm:mb-7 sm:text-base">
-            {currentSlide.description}
+            {tr(currentSlide.description)}
           </p>
 
           <Link
             to={currentSlide.href}
             className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#263238] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#37474F] hover:shadow-md sm:w-auto"
           >
-            {currentSlide.cta}
+            {tr(currentSlide.cta)}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -181,7 +183,7 @@ export function HeroSlider() {
         >
           <img
             src={currentSlide.image}
-            alt={currentSlide.title}
+            alt={tr(currentSlide.title)}
             width={640}
             height={420}
             decoding="async"
@@ -196,7 +198,7 @@ export function HeroSlider() {
       <button
         type="button"
         onClick={prev}
-        aria-label="Slide sebelumnya"
+        aria-label={tr("Slide sebelumnya")}
         className="absolute left-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:left-5 sm:flex"
       >
         <ChevronLeft className="h-5 w-5" />
@@ -206,7 +208,7 @@ export function HeroSlider() {
       <button
         type="button"
         onClick={next}
-        aria-label="Slide berikutnya"
+        aria-label={tr("Slide berikutnya")}
         className="absolute right-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#263238]/10 bg-white/90 text-[#263238] shadow-sm transition-all hover:bg-[#FFD54F] sm:right-5 sm:flex"
       >
         <ChevronRight className="h-5 w-5" />
@@ -220,7 +222,7 @@ export function HeroSlider() {
               key={slide.image}
               type="button"
               onClick={() => goTo(index)}
-              aria-label={`Pilih slide ${index + 1}`}
+              aria-label={tr("Pilih slide {number}", { number: index + 1 })}
               aria-current={active === index ? "true" : undefined}
               className="flex h-8 w-8 items-center justify-center"
             >
@@ -238,7 +240,11 @@ export function HeroSlider() {
       </div>
 
       <span className="sr-only" aria-live="polite">
-        Slide {active + 1} dari {SLIDES.length}: {currentSlide.title}
+        {tr("Slide {current} dari {total}: {title}", {
+          current: active + 1,
+          total: SLIDES.length,
+          title: tr(currentSlide.title),
+        })}
       </span>
     </section>
   );

@@ -17,6 +17,7 @@ import { HeroSlider } from "@/components/ui/hero-slider";
 import { PlaceholderImage } from "@/components/shared/placeholder-image";
 import { listGuides } from "@/services/guides.service";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useLanguage } from "@/lib/i18n";
 
 const features = [
   {
@@ -98,6 +99,7 @@ type Article = {
 };
 
 export function BerandaPage() {
+  const { t, tr } = useLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [guideError, setGuideError] = useState(false);
@@ -149,23 +151,23 @@ export function BerandaPage() {
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-surface px-3 py-1 text-xs font-semibold text-secondary">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                Informasi kesehatan tepercaya
+                {tr("Informasi kesehatan tepercaya")}
               </span>
 
               <h1 className="mt-4 font-bold leading-tight tracking-tight text-main-text text-[clamp(1.875rem,6vw,2.5rem)]">
-                Pahami obat, jaga kesehatan Anda
+                {tr("Pahami obat, jaga kesehatan Anda")}
               </h1>
 
               <p className="mt-4 text-base leading-relaxed text-secondary-text sm:text-lg">
-                ApotekerKita membantu Anda memahami obat, memeriksa interaksi,
-                menghitung dosis, dan mengelola jadwal minum obat — semua dalam
-                satu tempat.
+                {tr(
+                  "ApotekerKita membantu Anda memahami obat, memeriksa interaksi, menghitung dosis, dan mengelola jadwal minum obat — semua dalam satu tempat."
+                )}
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="w-full sm:w-auto">
                   <Link to="/obat">
-                    Jelajahi Obat
+                    {tr("Jelajahi Obat")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -178,7 +180,7 @@ export function BerandaPage() {
                 >
                   <Link to="/tanya">
                     <MessageCircle className="mr-2 h-4 w-4" />
-                    Tanya Apoteker
+                    {tr("Tanya Apoteker")}
                   </Link>
                 </Button>
               </div>
@@ -187,7 +189,7 @@ export function BerandaPage() {
             <div className="relative md:mt-12 lg:mt-0">
               <PlaceholderImage
                 src="/images/obat.png"
-                alt="Ilustrasi obat sehari-hari"
+                alt={tr("Ilustrasi obat sehari-hari")}
                 className="mx-auto h-auto w-full max-w-[420px] object-contain sm:max-w-[520px]"
               />
             </div>
@@ -200,10 +202,10 @@ export function BerandaPage() {
         <div className="mb-5 flex items-end justify-between">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-main-text sm:text-2xl">
-              Fitur Utama
+              {t("home_features_title")}
             </h2>
             <p className="mt-1 text-sm text-secondary-text">
-              Semua yang Anda butuhkan seputar obat, dalam satu platform.
+              {t("home_features_desc")}
             </p>
           </div>
         </div>
@@ -220,12 +222,12 @@ export function BerandaPage() {
                   </div>
 
                   <h3 className="mt-4 flex items-center gap-1.5 text-base font-semibold text-main-text">
-                    {f.title}
+                    {tr(f.title)}
                     <ArrowRight className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
                   </h3>
 
                   <p className="mt-1 text-sm leading-relaxed text-secondary-text">
-                    {f.desc}
+                    {tr(f.desc)}
                   </p>
                 </Card>
               </Link>
@@ -239,10 +241,10 @@ export function BerandaPage() {
         <div className="mb-5 flex items-end justify-between">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-main-text sm:text-2xl">
-              Panduan Kesehatan
+              {t("home_guides_title")}
             </h2>
             <p className="mt-1 text-sm text-secondary-text">
-              Artikel pilihan seputar penggunaan obat yang aman.
+              {t("home_guides_desc")}
             </p>
           </div>
 
@@ -250,7 +252,7 @@ export function BerandaPage() {
             to="/panduan"
             className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary sm:inline-flex"
           >
-            Lihat semua <ArrowRight className="h-4 w-4" />
+            {t("home_view_all")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
@@ -268,15 +270,15 @@ export function BerandaPage() {
           </div>
         ) : guideError ? (
           <EmptyState
-            title="Panduan belum dapat dimuat"
-            description="Periksa koneksi Anda, lalu coba muat ulang."
-            actionLabel="Coba lagi"
+            title={tr("Panduan belum dapat dimuat")}
+            description={tr("Periksa koneksi Anda, lalu coba muat ulang.")}
+            actionLabel={tr("Coba lagi")}
             onAction={retryGuides}
           />
         ) : articles.length === 0 ? (
           <EmptyState
-            title="Panduan tidak ditemukan"
-            description="Panduan kesehatan akan tampil di sini setelah tersedia."
+            title={t("home_empty_guides_title")}
+            description={tr("Panduan kesehatan akan tampil di sini setelah tersedia.")}
           />
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -287,27 +289,27 @@ export function BerandaPage() {
               >
                 <PlaceholderImage
                   src={a.imageUrl}
-                  alt={a.title}
+                  alt={tr(a.title)}
                   className="mb-4 h-40 w-full rounded-md object-cover sm:h-48"
                 />
 
                 <span className="w-fit rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-secondary">
-                  {a.category}
+                  {tr(a.category)}
                 </span>
 
                 <h3 className="mt-3 text-base font-semibold leading-snug text-main-text">
-                  {a.title}
+                  {tr(a.title)}
                 </h3>
 
                 <p className="mt-1.5 flex-1 text-sm leading-relaxed text-secondary-text">
-                  {a.excerpt}
+                  {tr(a.excerpt)}
                 </p>
 
                 <Link
                   to={a.href}
                   className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:underline"
                 >
-                  Baca selengkapnya <ArrowRight className="h-4 w-4" />
+                  {t("home_read_more")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Card>
             ))}
@@ -318,7 +320,7 @@ export function BerandaPage() {
       {/* Logo carousel */}
       <section className="overflow-hidden border-y border-border py-8 sm:py-14">
         <p className="mb-5 px-4 text-center text-xs font-semibold uppercase tracking-wider text-secondary-text sm:mb-6">
-          Dipercaya oleh berbagai apotek di Indonesia
+          {tr("Dipercaya oleh berbagai apotek di Indonesia")}
         </p>
 
         <div className="logo-marquee relative overflow-hidden">

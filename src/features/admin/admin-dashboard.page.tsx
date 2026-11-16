@@ -9,8 +9,10 @@ import { PageHeader } from "@/components/shared/page-header";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { StatCard } from "@/components/shared/stat-card";
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "@/lib/i18n";
 
 export function AdminDashboardPage() {
+  const { tr } = useLanguage();
   const [counts, setCounts] = useState({
     medications: 0,
     interactions: 0,
@@ -70,23 +72,23 @@ export function AdminDashboardPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader
-        title="Dashboard Admin"
-        description="Kelola konten dan data platform ApotekerKita."
+        title={tr("Dashboard Admin")}
+        description={tr("Kelola konten dan data platform ApotekerKita.")}
         icon={LayoutDashboard}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <Link key={c.title} to={c.href}>
-            <StatCard title={c.title} value={c.value} icon={c.icon} description={c.desc} accent={c.accent} />
+            <StatCard title={tr(c.title)} value={c.value} icon={c.icon} description={tr(c.desc)} accent={c.accent} />
           </Link>
         ))}
       </div>
 
       <Card className="overflow-hidden">
         <div className="border-b border-border px-5 py-4">
-          <h2 className="text-base font-semibold text-main-text">Akses cepat</h2>
-          <p className="mt-0.5 text-sm text-secondary-text">Kelola bagian platform lain dengan cepat.</p>
+          <h2 className="text-base font-semibold text-main-text">{tr("Akses cepat")}</h2>
+          <p className="mt-0.5 text-sm text-secondary-text">{tr("Kelola bagian platform lain dengan cepat.")}</p>
         </div>
         <ul className="divide-y divide-border">
           {links.map((l) => (
@@ -96,8 +98,8 @@ export function AdminDashboardPage() {
                 className="group flex items-center justify-between px-5 py-4 transition-colors hover:bg-accent/50"
               >
                 <div>
-                  <p className="text-sm font-medium text-main-text">{l.label}</p>
-                  <p className="text-xs text-secondary-text">{l.desc}</p>
+                  <p className="text-sm font-medium text-main-text">{tr(l.label)}</p>
+                  <p className="text-xs text-secondary-text">{tr(l.desc)}</p>
                 </div>
                 <ArrowRight className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
               </Link>

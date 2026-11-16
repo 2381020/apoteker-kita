@@ -1,0 +1,2 @@
+﻿import { EN_TEXT } from "./i18n-content";
+      const template = lang === "en" ? EN_TEXT[text] ?? text : text;

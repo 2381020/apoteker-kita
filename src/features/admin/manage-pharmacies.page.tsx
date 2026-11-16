@@ -23,11 +23,13 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
 import { useToast } from "@/components/ui/toast";
 import { downloadPharmacyTemplate } from "@/lib/xlsx-template";
+import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 10;
 
 export function ManagePharmaciesPage() {
   const { add } = useToast();
+  const { t, tr } = useLanguage();
   const [list, setList] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -80,18 +82,18 @@ export function ManagePharmaciesPage() {
       if (form.id) {
         const updated = await updatePharmacy(form.id, input);
         setList((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
-        add({ title: "Apotek diperbarui", description: updated.name, variant: "success" });
+        add({ title: tr("Apotek diperbarui"), description: updated.name, variant: "success" });
       } else {
         const created = await createPharmacy(input);
         setList((prev) => [created, ...prev]);
-        add({ title: "Apotek ditambahkan", description: created.name, variant: "success" });
+        add({ title: tr("Apotek ditambahkan"), description: created.name, variant: "success" });
       }
       setOpen(false);
       setForm({});
     } catch (error) {
       add({
-        title: "Gagal menyimpan apotek",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan",
+        title: tr("Gagal menyimpan apotek"),
+        description: error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     } finally {
@@ -108,11 +110,11 @@ export function ManagePharmaciesPage() {
     try {
       await deletePharmacy(id);
       setList((prev) => prev.filter((x) => x.id !== id));
-      add({ title: "Apotek dihapus", description: target?.name, variant: "success" });
+      add({ title: tr("Apotek dihapus"), description: target?.name, variant: "success" });
     } catch (error) {
       add({
-        title: "Gagal menghapus apotek",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan",
+        title: tr("Gagal menghapus apotek"),
+        description: error instanceof Error ? error.message : tr("Terjadi kesalahan"),
         variant: "destructive",
       });
     }
@@ -150,7 +152,7 @@ export function ManagePharmaciesPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <PageHeader title="Kelola Apotek" description="Kelola data apotek mitra." icon={Building2}>
+      <PageHeader title={tr("Kelola Apotek")} description={tr("Kelola data apotek mitra.")} icon={Building2}>
         <Button
           onClick={() => {
             setForm({});
@@ -158,18 +160,18 @@ export function ManagePharmaciesPage() {
           }}
         >
           <Plus className="mr-1.5 h-4 w-4" />
-          Tambah Apotek
+          {tr("Tambah Apotek")}
         </Button>
       </PageHeader>
 
       <div className="flex flex-wrap gap-3">
         <Button variant="outline" onClick={downloadPharmacyTemplate}>
           <Download className="mr-1.5 h-4 w-4" />
-          Unduh Template
+          {tr("Unduh Template")}
         </Button>
         <Button variant="outline" onClick={() => setImportDialogOpen(true)}>
           <Upload className="mr-1.5 h-4 w-4" />
-          Impor
+          {tr("Impor")}
         </Button>
       </div>
 
@@ -177,32 +179,35 @@ export function ManagePharmaciesPage() {
         <div className="border-b border-border px-5 py-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-base font-semibold text-main-text">Daftar Apotek</h2>
+              <h2 className="text-base font-semibold text-main-text">{tr("Daftar Apotek")}</h2>
               <p className="mt-0.5 text-sm text-secondary-text">
                 {search.trim()
-                  ? `${filteredList.length} dari ${list.length} apotek`
-                  : `${list.length} apotek terdaftar`}
+                  ? tr("{count} dari {total} apotek", {
+                      count: filteredList.length,
+                      total: list.length,
+                    })
+                  : tr("{count} apotek terdaftar", { count: list.length })}
               </p>
             </div>
             <SearchBar
               value={search}
               onChange={setSearch}
-              placeholder="Cari nama, kota, atau alamat..."
+              placeholder={tr("Cari nama, kota, atau alamat...")}
               className="sm:w-72"
             />
           </div>
         </div>
         {list.length === 0 ? (
           <div className="p-6">
-            <EmptyState icon={SearchX} title="Belum ada data apotek" description="Tambahkan apotek pertama Anda." />
+            <EmptyState icon={SearchX} title={tr("Belum ada data apotek")} description={tr("Tambahkan apotek pertama Anda.")} />
           </div>
         ) : filteredList.length === 0 ? (
           <div className="p-6">
             <EmptyState
               icon={SearchX}
-              title="Apotek tidak ditemukan"
-              description="Coba gunakan kata kunci lain."
-              actionLabel="Reset pencarian"
+              title={tr("Apotek tidak ditemukan")}
+              description={tr("Coba gunakan kata kunci lain.")}
+              actionLabel={tr("Reset pencarian")}
               onAction={() => setSearch("")}
             />
           </div>
@@ -219,21 +224,21 @@ export function ManagePharmaciesPage() {
                       </p>
                     </div>
                     <Badge variant={p.isOpen ? "success" : "secondary"} className="shrink-0">
-                      {p.isOpen ? "Buka" : "Tutup"}
+                      {p.isOpen ? t("pharmacy_status_open") : t("pharmacy_status_closed")}
                     </Badge>
                   </div>
                   <div className="mt-2.5 flex gap-1.5">
                     <Button size="sm" variant="outline" onClick={() => edit(p)} aria-label={`Edit ${p.name}`}>
-                      <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
+                      <Pencil className="mr-1 h-3.5 w-3.5" /> {tr("Edit")}
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => setDeleteId(p.id)}
-                      aria-label={`Hapus ${p.name}`}
+                      aria-label={`${tr("Hapus")} ${p.name}`}
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      <Trash2 className="mr-1 h-3.5 w-3.5" /> Hapus
+                      <Trash2 className="mr-1 h-3.5 w-3.5" /> {tr("Hapus")}
                     </Button>
                   </div>
                 </li>
@@ -244,10 +249,10 @@ export function ManagePharmaciesPage() {
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-secondary-text">
-                    <th className="px-5 py-3 font-semibold">Nama</th>
-                    <th className="px-3 py-3 font-semibold">Kota</th>
-                    <th className="px-3 py-3 font-semibold">Status</th>
-                    <th className="px-5 py-3 text-right font-semibold">Aksi</th>
+                    <th className="px-5 py-3 font-semibold">{tr("Nama")}</th>
+                    <th className="px-3 py-3 font-semibold">{tr("Kota")}</th>
+                    <th className="px-3 py-3 font-semibold">{tr("Status")}</th>
+                    <th className="px-5 py-3 text-right font-semibold">{tr("Aksi")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -259,7 +264,7 @@ export function ManagePharmaciesPage() {
                       </td>
                       <td className="px-3 py-3.5 text-secondary-text">{p.city}</td>
                       <td className="px-3 py-3.5">
-                        <Badge variant={p.isOpen ? "success" : "secondary"}>{p.isOpen ? "Buka" : "Tutup"}</Badge>
+                        <Badge variant={p.isOpen ? "success" : "secondary"}>{p.isOpen ? t("pharmacy_status_open") : t("pharmacy_status_closed")}</Badge>
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="flex justify-end gap-1.5">
@@ -270,7 +275,7 @@ export function ManagePharmaciesPage() {
                             size="sm"
                             variant="ghost"
                             onClick={() => setDeleteId(p.id)}
-                            aria-label={`Hapus ${p.name}`}
+                            aria-label={`${tr("Hapus")} ${p.name}`}
                             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -289,37 +294,37 @@ export function ManagePharmaciesPage() {
               totalItems={filteredList.length}
               pageSize={PAGE_SIZE}
               onPageChange={setPage}
-              itemLabel="apotek"
+              itemLabel={tr("apotek")}
             />
           </>
         )}
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen} title={form.id ? "Edit Apotek" : "Tambah Apotek"}>
+      <Dialog open={open} onOpenChange={setOpen} title={form.id ? tr("Edit Apotek") : tr("Tambah Apotek")}>
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Nama Apotek</Label>
-              <Input id="name" value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Sehat Jaya" />
+              <Label htmlFor="name">{tr("Nama Apotek")}</Label>
+              <Input id="name" value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={tr("Sehat Jaya")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="city">Kota</Label>
+              <Label htmlFor="city">{tr("Kota")}</Label>
               <Input id="city" value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Jakarta" />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="address">Alamat</Label>
-              <Input id="address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Jl. Kesehatan No. 10" />
+              <Label htmlFor="address">{tr("Alamat")}</Label>
+              <Input id="address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder={tr("Jl. Kesehatan No. 10")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Telepon</Label>
+              <Label htmlFor="phone">{tr("Telepon")}</Label>
               <Input id="phone" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="021-123456" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="distance">Jarak</Label>
-              <Input id="distance" value={form.distance || ""} onChange={(e) => setForm({ ...form, distance: e.target.value })} placeholder="1,2 km" />
+              <Label htmlFor="distance">{tr("Jarak")}</Label>
+              <Input id="distance" value={form.distance || ""} onChange={(e) => setForm({ ...form, distance: e.target.value })} placeholder={tr("1,2 km")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rating">Rating</Label>
+              <Label htmlFor="rating">{tr("Rating")}</Label>
               <Input id="rating" type="number" min="0" max="5" step="0.1" value={form.rating ? String(form.rating) : ""} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) || 0 })} placeholder="4.5" />
             </div>
             <label className="flex items-center gap-2.5 text-sm text-secondary-text">
@@ -329,15 +334,15 @@ export function ManagePharmaciesPage() {
                 onChange={(e) => setForm({ ...form, isOpen: e.target.checked })}
                 className="h-4 w-4 rounded border-input accent-primary"
               />
-              Saat ini buka
+              {tr("Saat ini buka")}
             </label>
           </div>
           <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Batal
+              {tr("Batal")}
             </Button>
             <Button onClick={save} disabled={saving || !form.name?.trim()}>
-              {saving ? "Menyimpan..." : "Simpan"}
+              {saving ? tr("Menyimpan...") : tr("Simpan")}
             </Button>
           </div>
         </div>
@@ -346,8 +351,8 @@ export function ManagePharmaciesPage() {
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(o) => !o && setDeleteId(null)}
-        title="Hapus apotek ini?"
-        description="Data apotek akan dihapus permanen dari database."
+        title={tr("Hapus apotek ini?")}
+        description={tr("Data apotek akan dihapus permanen dari database.")}
         onConfirm={() => {
           if (deleteId) {
             void hapus(deleteId);
@@ -358,15 +363,15 @@ export function ManagePharmaciesPage() {
 
       {importResult && (
         <div className="rounded-lg border border-border bg-surface p-4">
-          <p className="text-sm text-secondary-text">Hasil impor:</p>
+          <p className="text-sm text-secondary-text">{tr("Hasil impor:")}</p>
           <div className="mt-2 grid gap-2 sm:grid-cols-3">
             <div>
               <p className="text-lg font-semibold text-main-text">{importResult.inserted}</p>
-              <p className="text-xs text-secondary-text">Disisipkan</p>
+              <p className="text-xs text-secondary-text">{tr("Disisipkan")}</p>
             </div>
             <div>
               <p className="text-lg font-semibold text-main-text">{importResult.skipped}</p>
-              <p className="text-xs text-secondary-text">Dilewati</p>
+              <p className="text-xs text-secondary-text">{tr("Dilewati")}</p>
             </div>
             <div>
               <p className="text-lg font-semibold text-destructive">{importResult.errors.length}</p>
@@ -391,14 +396,13 @@ export function ManagePharmaciesPage() {
           setImportDialogOpen(o);
           if (!o) setImportResult(null);
         }}
-        title="Impor Apotek dari Excel/CSV"
+        title={tr("Impor Apotek dari Excel/CSV")}
       >
         <div className="space-y-4">
           <p className="text-sm text-secondary-text">
-            Unduh template di atas, lalu isi sheet &quot;Data&quot;. Sheet
-            &quot;Petunjuk&quot; berisi contoh pengisian. Kolom: Nama, Alamat,
-            Kota, Telepon, Jarak, Rating, Buka, Layanan (pisahkan layanan
-            dengan titik koma).
+            {tr(
+              "Unduh template di atas, lalu isi sheet \"Data\". Sheet \"Petunjuk\" berisi contoh pengisian. Kolom: Nama, Alamat, Kota, Telepon, Jarak, Rating, Buka, Layanan (pisahkan layanan dengan titik koma).",
+            )}
           </p>
           <Input
             type="file"
@@ -417,8 +421,11 @@ export function ManagePharmaciesPage() {
                   setPage(1);
                 });
                 add({
-                  title: "Impor selesai",
-                  description: `${result.inserted} apotek disisipkan, ${result.skipped} dilewati`,
+                  title: tr("Impor selesai"),
+                  description: tr(
+                    "{inserted} apotek disisipkan, {skipped} dilewati",
+                    { inserted: result.inserted, skipped: result.skipped },
+                  ),
                   variant: result.errors.length > 0 ? "destructive" : "success",
                 });
               });
